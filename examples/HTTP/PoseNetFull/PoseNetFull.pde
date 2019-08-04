@@ -25,9 +25,6 @@
 // Running PoseNet model
 // original example by Anastasis Germanidis, adapted by George Profenza
 
-// import OSC libraries
-import oscP5.*;
-import netP5.*;
 // import Runway library
 import com.runwayml.*;
 // reference to runway instance
