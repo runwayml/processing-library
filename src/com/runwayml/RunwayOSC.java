@@ -21,10 +21,6 @@ public class RunwayOSC extends Runway {
 	public static final String ERROR 	  = "/error";
 	public static final String INFO 	  = "/info";
 	
-	//reference: https://stackoverflow.com/Questions/5667371/validate-ipv4-address-in-java
-	private static final Pattern IPV4_PATTERN = Pattern.compile(
-	        "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
-	
 	private OscP5 oscP5;
 	NetAddress runwayNetAddress;
 	
@@ -96,48 +92,31 @@ public class RunwayOSC extends Runway {
 	public void oscEvent(OscMessage message) {
 		// check info address and type tag
 		if(message.checkAddrPattern(INFO) && message.checkTypetag("s")){
-			// if the callback isn't null
-			if (onInfoEventMethod != null) {
-				// try to call it
-				try {
-					// JSON parse first string argument and pass as callback argument 
-					onInfoEventMethod.invoke(parent, JSONObject.parse(	message.get(0).stringValue()	));
-				}catch (Exception e) {
-					System.err.println("Error, disabling runwayInfoEvent()");
-					System.err.println(e.getLocalizedMessage());
-					onInfoEventMethod = null;
-				}
+			try {
+				dispatchInfo(JSONObject.parse(	message.get(0).stringValue()	));
+			} catch (Exception e) {
+				System.err.println("error parsing JSON from /info OSC message");
+				e.printStackTrace();
 			}
+			
 		}
 		
 		// check error address and type tag
 		if(message.checkAddrPattern(ERROR) && message.checkTypetag("s")){
-			// if the callback isn't null
-			if (onErrorEventMethod != null) {
-				// try to call it
-				try {
-					// pass OSC first argument as callback argument 
-					onErrorEventMethod.invoke(parent, message.get(0).stringValue());
-				}catch (Exception e) {
-					System.err.println("Error, disabling runwayErrorEvent()");
-					System.err.println(e.getLocalizedMessage());
-					onErrorEventMethod = null;
-				}
+			try{
+				dispatchError(message.get(0).stringValue());
+			} catch (Exception e) {
+				System.err.println("error accessing string from /error OSC message");
+				e.printStackTrace();
 			}
 		}
 		// check data address and type tag
 		if(message.checkAddrPattern(DATA) && message.checkTypetag("s")){
-			// if the callback isn't null
-			if (onDataEventMethod != null) {
-				// try to call it
-				try {
-					// JSON parse first string argument and pass as callback argument 
-					onDataEventMethod.invoke(parent, JSONObject.parse(	message.get(0).stringValue()	));
-				}catch (Exception e) {
-					System.err.println("Error, disabling runwayDataEvent()");
-					System.err.println(e.getLocalizedMessage());
-					onDataEventMethod = null;
-				}
+			try {
+				dispatchData(JSONObject.parse(	message.get(0).stringValue()	));
+			}catch (Exception e) {
+				System.err.println("error parsing JSON from /data OSC message");
+				e.printStackTrace();
 			}
 		}
 		
