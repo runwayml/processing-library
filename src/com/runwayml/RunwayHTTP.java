@@ -17,6 +17,8 @@ public class RunwayHTTP extends Runway {
 	
 	private String serverAddress;
 	
+	private boolean autoUpdate = true;
+	
 	/**
 	 * a Constructor, usually called in the setup() method in your sketch to
 	 * initialize and start the Library.
@@ -62,15 +64,19 @@ public class RunwayHTTP extends Runway {
 	
 	// TODO disable events on first error
 	public void pre(){
+		update();
+	}
+	
+	public void update(){
 		// load error
 		try {
 			JSONObject error = parent.loadJSONObject(serverAddress + ERROR);
 			// if there is error data
 			//TODO find a more elegant way of checking for errors
 			if(!error.get("error").toString().equals("null")){
-//				// send data
+//						// send data
 				//dispatchError(error.getString("error"));
-//				// TODO: detemine if error object is String / JSONObject / etc.
+//						// TODO: detemine if error object is String / JSONObject / etc.
 				dispatchError("error");
 				// no need to load data if there is an error
 				return;
@@ -87,6 +93,25 @@ public class RunwayHTTP extends Runway {
 		}catch (Exception e) {
 			System.err.println("error parsing JSON from /data HTTP route");
 			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @return the autoUpdate
+	 */
+	public boolean isAutoUpdating() {
+		return autoUpdate;
+	}
+
+	/**
+	 * @param autoUpdate the value to set
+	 */
+	public void setAutoUpdate(boolean autoUpdate) {
+		this.autoUpdate = autoUpdate;
+		if(autoUpdate){
+			parent.registerMethod("pre", this);
+		}else{
+			parent.unregisterMethod("pre", this);
 		}
 	}
 }
