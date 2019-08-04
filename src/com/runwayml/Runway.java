@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.*;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
@@ -38,6 +39,10 @@ public class Runway {
 	protected Method onDataEventMethod;
 	protected Method onErrorEventMethod;
 	
+	//reference: https://stackoverflow.com/Questions/5667371/validate-ipv4-address-in-java
+	protected static final Pattern IPV4_PATTERN = Pattern.compile(
+	        "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
+	
 	protected void setupPApplet(PApplet parent){
 		this.parent = parent;
 		this.onInfoEventMethod = findCallback("runwayInfoEvent",JSONObject.class);
@@ -52,6 +57,59 @@ public class Runway {
 	 */
 	public void query(PImage input){
 		
+	}
+	
+	/**
+	 * if <pre>runwayInfoEvent</pre> is present it calls it passing the info <pre>JSONObject</pre>
+	 * @param info
+	 */
+	protected void dispatchInfo(JSONObject info){
+		// if the callback isn't null
+		if (onInfoEventMethod != null) {
+			// try to call it
+			try {
+				// JSON parse first string argument and pass as callback argument 
+				onInfoEventMethod.invoke(parent, info);
+			}catch (Exception e) {
+				System.err.println("Error, disabling runwayInfoEvent()");
+				System.err.println(e.getLocalizedMessage());
+				onInfoEventMethod = null;
+			}
+		}
+	}
+	
+	/**
+	 * if <pre>runwayErrorEvent</pre> is present it calls it passing the error String
+	 * @param info
+	 */
+	protected void dispatchError(String message){
+		// if the callback isn't null
+		if (onErrorEventMethod != null) {
+			// try to call it
+			try {
+				// pass OSC first argument as callback argument 
+				onErrorEventMethod.invoke(parent, message);
+			}catch (Exception e) {
+				System.err.println("Error, disabling runwayErrorEvent()");
+				System.err.println(e.getLocalizedMessage());
+				onErrorEventMethod = null;
+			}
+		}
+	}
+	
+	protected void dispatchData(JSONObject data){
+		// if the callback isn't null
+		if (onDataEventMethod != null) {
+			// try to call it
+			try {
+				// JSON parse first string argument and pass as callback argument 
+				onDataEventMethod.invoke(parent, data);
+			}catch (Exception e) {
+				System.err.println("Error, disabling runwayDataEvent()");
+				System.err.println(e.getLocalizedMessage());
+				onDataEventMethod = null;
+			}
+		}
 	}
 	
 	public void welcome() {
