@@ -16,23 +16,23 @@ import processing.data.JSONObject;
 
 public class ModelUtils {
 	
-	public static int POSE_NET_NOSE_INDEX 			=  0;
-	public static int POSE_NET_LEFT_EYE_INDEX  		=  1;
-	public static int POSE_NET_RIGHT_EYE_INDEX 		=  2;
-	public static int POSE_NET_LEFT_EAR_INDEX  		=  3;
-	public static int POSE_NET_RIGHT_EAR_INDEX 		=  4;
-	public static int POSE_NET_LEFT_SHOULDER_INDEX  =  5;
-	public static int POSE_NET_RIGHT_SHOULDER_INDEX =  6;
-	public static int POSE_NET_LEFT_ELBOW_INDEX  	=  7;
-	public static int POSE_NET_RIGHT_ELBOW_INDEX 	=  8;
-	public static int POSE_NET_LEFT_WRIST_INDEX  	=  9;
-	public static int POSE_NET_RIGHT_WRIST_INDEX 	= 10;
-	public static int POSE_NET_LEFT_HIP_INDEX  		= 11;
-	public static int POSE_NET_RIGHT_HIP_INDEX 		= 12;
-	public static int POSE_NET_LEFT_KNEE_INDEX  	= 13;
-	public static int POSE_NET_RIGHT_KNEE_INDEX 	= 14;
-	public static int POSE_NET_LEFT_ANKLE_INDEX  	= 15;
-	public static int POSE_NET_RIGHT_ANKLE_INDEX 	= 16;
+	public static int POSE_NOSE_INDEX 			=  0;
+	public static int POSE_LEFT_EYE_INDEX  		=  1;
+	public static int POSE_RIGHT_EYE_INDEX 		=  2;
+	public static int POSE_LEFT_EAR_INDEX  		=  3;
+	public static int POSE_RIGHT_EAR_INDEX 		=  4;
+	public static int POSE_LEFT_SHOULDER_INDEX  =  5;
+	public static int POSE_RIGHT_SHOULDER_INDEX =  6;
+	public static int POSE_LEFT_ELBOW_INDEX  	=  7;
+	public static int POSE_RIGHT_ELBOW_INDEX 	=  8;
+	public static int POSE_LEFT_WRIST_INDEX  	=  9;
+	public static int POSE_RIGHT_WRIST_INDEX 	= 10;
+	public static int POSE_LEFT_HIP_INDEX  		= 11;
+	public static int POSE_RIGHT_HIP_INDEX 		= 12;
+	public static int POSE_LEFT_KNEE_INDEX  	= 13;
+	public static int POSE_RIGHT_KNEE_INDEX 	= 14;
+	public static int POSE_LEFT_ANKLE_INDEX  	= 15;
+	public static int POSE_RIGHT_ANKLE_INDEX 	= 16;
 	
 	/**
 	 * Traverses Pose Net poses and keypoints and draws ellipses for each keypoint position
@@ -40,7 +40,7 @@ public class ModelUtils {
 	 * @param g	   - the PGraphics instance to draw into
 	 * @param ellipseSize - dimensions in pixels of each keypoint position ellipse diameter
 	 */
-	public static void drawPoseNetParts(JSONObject data,PGraphics g,float ellipseSize){
+	public static void drawPoseParts(JSONObject data,PGraphics g,float ellipseSize){
 		try{
 			// Only if there are any humans detected
 			  if (data != null) {
@@ -80,9 +80,9 @@ public class ModelUtils {
 	    BufferedImage buffImage = (BufferedImage)image.getNative();
 	    ByteArrayOutputStream out = new ByteArrayOutputStream();
 	    try {
-			ImageIO.write(buffImage, "PNG", out);
+			ImageIO.write(buffImage, "JPG", out);
 			byte[] bytes = out.toByteArray();
-			result = Base64.encodeBase64String(bytes);
+			result = "data:image/jpeg;base64,"+Base64.encodeBase64String(bytes);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -126,7 +126,7 @@ public class Runway {
 	}
 	
 	public void drawPoseNetParts(JSONObject data,float ellipseSize){
-		ModelUtils.drawPoseNetParts(data, parent.g, ellipseSize);
+		ModelUtils.drawPoseParts(data, parent.g, ellipseSize);
 	}
 	
 	// "kindly borrowed" from https://github.com/processing/processing/blob/master/java/libraries/serial/src/processing/serial/Serial.java

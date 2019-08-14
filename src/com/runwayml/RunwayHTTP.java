@@ -1,9 +1,14 @@
 package com.runwayml;
 
-import netP5.NetAddress;
-import oscP5.OscP5;
-import oscP5.OscProperties;
+import java.io.IOException;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import processing.core.PApplet;
+import processing.core.PImage;
 import processing.data.JSONObject;
 
 public class RunwayHTTP extends Runway {
@@ -84,6 +89,7 @@ public class RunwayHTTP extends Runway {
 		} catch (Exception e) {
 			System.err.println("error accessing string from /error HTTP route");
 			e.printStackTrace();
+			this.onInfoEventMethod = null;
 		}
 		
 		// load data
@@ -93,6 +99,7 @@ public class RunwayHTTP extends Runway {
 		}catch (Exception e) {
 			System.err.println("error parsing JSON from /data HTTP route");
 			e.printStackTrace();
+			this.onDataEventMethod = null;
 		}
 	}
 
@@ -113,5 +120,41 @@ public class RunwayHTTP extends Runway {
 		}else{
 			parent.unregisterMethod("pre", this);
 		}
+	}
+	
+	/**
+	 * send a query to Runway
+	 * 
+	 * @param input - input image for Runway to query (assumes image is resized/cropped to dimensions set in model)
+	 */
+	@Override
+	public void query(PImage input){
+		String base64 = ModelUtils.toBase64(input);
+	    
+	    OkHttpClient client = new OkHttpClient();
+	    
+	    MediaType mediaType = MediaType.parse("application/json");
+	    RequestBody body = RequestBody.create(mediaType,"{\"image\":\""+base64+"\"}");
+	    
+	    Request request = new Request.Builder()
+	    .url("http://localhost:8000/query")
+	    .post(body)
+	    .addHeader("Content-Type", "application/json")
+	    .addHeader("Accept", "*/*")
+	    .addHeader("Accept-Encoding", "gzip, deflate")
+	    .addHeader("Connection", "keep-alive")
+	    .build();
+	    
+	    try{
+	      Response response = client.newCall(request).execute();
+	      JSONObject data = JSONObject.parse(response.body().string());
+	      dispatchData(data);
+	    }catch(IOException e){
+	      e.printStackTrace();
+	    }catch (Exception e) {
+	    	System.err.println("error parsing JSON from /data HTTP route");
+	    	e.printStackTrace();
+	    	this.onDataEventMethod = null;
+	    }
 	}
 }

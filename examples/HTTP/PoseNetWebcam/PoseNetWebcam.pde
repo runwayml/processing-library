@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Runway AI Examples
+// Copyright (C) 2019 Runway AI Examples
 // 
 // This file is part of Runway AI Examples.
 // 
@@ -21,10 +21,12 @@
 // www.runwayapp.ai
 
 // PoseNet Demo:
-// Receive OSC messages from Runway
+// Receive HTTP messages from Runway
 // Running PoseNet model
 // original example by Anastasis Germanidis, adapted by George Profenza
 
+// import video library
+import processing.video.*;
 // import Runway library
 import com.runwayml.*;
 // reference to runway instance
@@ -50,6 +52,9 @@ int[][] connections = {
   {ModelUtils.POSE_LEFT_KNEE_INDEX,ModelUtils.POSE_LEFT_ANKLE_INDEX}
 };
 
+//reference to the camera
+Capture camera;
+
 void setup(){
   // match sketch size to default model camera setup
   size(600,400);
@@ -58,15 +63,24 @@ void setup(){
   strokeWeight(3);
   // setup Runway
   runway = new RunwayHTTP(this);
+  // disable automatic polling: request data manually when a new frame is ready
+  runway.setAutoUpdate(false);
+  // setup camera
+  camera = new Capture(this,640,480);
+  camera.start();
 }
 
 void draw(){
   background(0);
+  // draw webcam image
+  image(camera,0,0);
   // manually draw PoseNet parts
-  drawPoseNetParts(data);
+  drawPoseParts(data);
+  // usage text
+  text("press 'SPACE' to query image",5,15);
 }
 
-void drawPoseNetParts(JSONObject data){
+void drawPoseParts(JSONObject data){
   // Only if there are any humans detected
   if (data != null) {
     JSONArray humans = data.getJSONArray("poses");
@@ -104,4 +118,17 @@ public void runwayInfoEvent(JSONObject info){
 // if anything goes wrong
 public void runwayErrorEvent(String message){
   println(message);
+}
+
+void captureEvent(Capture camera){
+  camera.read();
+}
+
+void keyPressed(){
+  if(key == ' '){
+    // crop image to Runway input format (600x400)
+    PImage image = camera.get(0,0,600,400);
+    // query Runway with webcam image 
+    runway.query(image);
+  }
 }
