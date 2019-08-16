@@ -5,5 +5,7 @@
 	<classpathentry kind="lib" path="/Users/George/Downloads/ProcessingDNLD/Processing3.5.3.app/Contents/Java/core.jar"/>
 	<classpathentry kind="lib" path="/Users/George/Documents/Processing3/libraries/oscP5/library/oscP5.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.10.jar"/>
+	<classpathentry kind="lib" path="lib/okhttp.jar"/>
+	<classpathentry kind="lib" path="lib/okio.jar"/>
 	<classpathentry kind="output" path="resources/code"/>
 </classpath>
