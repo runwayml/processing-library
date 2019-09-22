@@ -36,7 +36,6 @@ void setup(){
   drawing.background(0);
   drawing.noStroke();
   drawing.endDraw();
-  //runwayResult = loadImage("lib_decoded.png");
 }
 
 void draw(){

@@ -39,12 +39,8 @@ void runwayDataEvent(JSONObject runwayData){
   // try to decode the image from
   try{
     PImage result = ModelUtils.fromBase64(base64ImageString);
-    result.save(dataPath("lib_decoded.png"));
-    PImage p = loadImage(base64ImageString);
-    result.save(dataPath("p5_decoded.png"));
     if(result != null){
       runwayResult = result;
-      
     }
   }catch(Exception e){
     e.printStackTrace();
