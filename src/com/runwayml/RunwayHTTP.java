@@ -1,6 +1,7 @@
 package com.runwayml;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -67,7 +68,6 @@ public class RunwayHTTP extends Runway {
 		parent.registerMethod("pre", this);
 	}	
 	
-	// TODO disable events on first error
 	public void pre(){
 		update();
 	}
@@ -135,6 +135,45 @@ public class RunwayHTTP extends Runway {
 	    
 	    MediaType mediaType = MediaType.parse("application/json");
 	    RequestBody body = RequestBody.create(mediaType,"{\"image\":\""+base64+"\"}");
+	    
+	    Request request = new Request.Builder()
+	    .url("http://localhost:8000/query")
+	    .post(body)
+	    .addHeader("Content-Type", "application/json")
+	    .addHeader("Accept", "*/*")
+	    .addHeader("Accept-Encoding", "gzip, deflate")
+	    .addHeader("Connection", "keep-alive")
+	    .build();
+	    
+	    try{
+	      Response response = client.newCall(request).execute();
+	      JSONObject data = JSONObject.parse(response.body().string());
+	      dispatchData(data);
+	    }catch(IOException e){
+	      e.printStackTrace();
+	    }catch (Exception e) {
+	    	System.err.println("error parsing JSON from /data HTTP route");
+	    	e.printStackTrace();
+	    	this.onDataEventMethod = null;
+	    }
+	}
+	
+	/**
+	 * send a query to Runway
+	 * 
+	 * @param input - input image for Runway to query (assumes image is resized/cropped to dimensions set in model)
+	 * @param format - the image format: <pre>ModelUtils.IMAGE_FORMAT_JPG</pre>("JPG") or <pre>ModelUtils.IMAGE_FORMAT_PNG</pre>("PNG")
+	 * @param key - the JSON key for the Base64 image
+	 */
+	public void query(PImage input,String format,String key){
+		OkHttpClient client = new OkHttpClient.Builder()
+		        .connectTimeout(30, TimeUnit.SECONDS)
+		        .writeTimeout(30, TimeUnit.SECONDS)
+		        .readTimeout(30, TimeUnit.SECONDS)
+		        .build();
+		
+	    MediaType mediaType = MediaType.parse("application/json");
+	    RequestBody body = RequestBody.create(mediaType,ModelUtils.toRunwayImageQuery(input, format, key));
 	    
 	    Request request = new Request.Builder()
 	    .url("http://localhost:8000/query")

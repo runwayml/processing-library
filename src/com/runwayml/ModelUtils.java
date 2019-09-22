@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -34,6 +35,10 @@ public class ModelUtils {
 	public static int POSE_LEFT_ANKLE_INDEX  	= 15;
 	public static int POSE_RIGHT_ANKLE_INDEX 	= 16;
 	
+	public static String IMAGE_FORMAT_JPG = "JPG";
+	public static String IMAGE_FORMAT_PNG = "PNG";
+	
+	
 	/**
 	 * Traverses Pose Net poses and keypoints and draws ellipses for each keypoint position
 	 * @param data - the Runway PoseNet JSON object 
@@ -43,19 +48,17 @@ public class ModelUtils {
 	public static void drawPoseParts(JSONObject data,PGraphics g,float ellipseSize){
 		try{
 			// Only if there are any humans detected
-			  if (data != null) {
-			    JSONArray humans = data.getJSONArray("poses");
+			if (data != null) {
+				JSONArray humans = data.getJSONArray("poses");
 			    for(int h = 0; h < humans.size(); h++) {
-			      JSONObject human = humans.getJSONObject(h);
-			      JSONArray keypoints = human.getJSONArray("keypoints");
+			      JSONArray keypoints = humans.getJSONArray(h);
 			      // Now that we have one human, let's draw its body parts
 			      for (int k = 0; k < keypoints.size(); k++) {
-			        JSONObject body_part = keypoints.getJSONObject(k);
-			        JSONObject positions = body_part.getJSONObject("position");
 			        // Body parts are relative to width and weight of the input
-			        float x = positions.getFloat("x");
-			        float y = positions.getFloat("y");
-			        g.ellipse(x, y, ellipseSize, ellipseSize);
+			        JSONArray point = keypoints.getJSONArray(k);
+			        float x = point.getFloat(0);
+			        float y = point.getFloat(1);
+			        g.ellipse(x * g.width, y * g.height, ellipseSize, ellipseSize);
 			      }
 			    }
 			  }
@@ -64,10 +67,34 @@ public class ModelUtils {
 		}
 	}
 	
+	/**
+	 * convert a PImage to a JSONObject with the Base64 encoded image as the value of the "image" key 
+	 * @param image - the PImage to convert to Base64
+	 * @return JSON formatted String
+	 */
 	public static String toRunwayImageQuery(PImage image){
-		JSONObject result = new JSONObject();
-		result.setString("image", toBase64(image));
-		return result.format(-1);
+		return "{\"image\":\"" + toBase64(image) + "\"}";
+	}
+	
+	/**
+	 * convert a PImage to a JSONObject with the Base64 encoded image as the value of the "image" key 
+	 * @param image - the PImage to convert to Base64
+	 * @param format - the image format: <pre>ModelUtils.IMAGE_FORMAT_JPG</pre>("JPG") or <pre>ModelUtils.IMAGE_FORMAT_PNG</pre>("PNG")
+	 * @return JSON formatted String
+	 */
+	public static String toRunwayImageQuery(PImage image,String format){
+		return "{\"image\":\"" + toBase64(image,format) + "\"}";
+	}
+	
+	/**
+	 * convert a PImage to a JSONObject with the Base64 encoded image as the value of the "image" key 
+	 * @param image - the PImage to convert to Base64
+	 * @param format - the image format: <pre>ModelUtils.IMAGE_FORMAT_JPG</pre>("JPG") or <pre>ModelUtils.IMAGE_FORMAT_PNG</pre>("PNG")
+	 * @param key - the JSON key for the Base64 image
+	 * @return JSON formatted String
+	 */
+	public static String toRunwayImageQuery(PImage image,String format,String key){
+		return "{\"" + key + "\":\"" + toBase64(image,format) + "\"}";
 	}
 	
 	/**
@@ -77,33 +104,75 @@ public class ModelUtils {
 	 */
 	public static String toBase64(PImage image){
 		String result = null;
-	    BufferedImage buffImage = (BufferedImage)image.getNative();
-	    ByteArrayOutputStream out = new ByteArrayOutputStream();
+		
+	    BufferedImage jImage = (BufferedImage)image.getNative();
+	    ByteArrayOutputStream encodedBytesStream = new ByteArrayOutputStream();
 	    try {
-			ImageIO.write(buffImage, "JPG", out);
-			byte[] bytes = out.toByteArray();
-			result = "data:image/jpeg;base64,"+Base64.encodeBase64String(bytes);
+			ImageIO.write(jImage, "JPG", encodedBytesStream);
+			byte[] bytes = encodedBytesStream.toByteArray();
+			result = "data:image/jpeg;base64," + DatatypeConverter.printBase64Binary(bytes);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	    
 	    return result;
 	}
 	
-	public static PImage fromBase64(String runwayImageString){
-		PImage result = null;
-		byte[] decodedBytes = Base64.decodeBase64(runwayImageString);
-	 
-		ByteArrayInputStream in = new ByteArrayInputStream(decodedBytes);
-		BufferedImage bImageFromConvert;
+	/**
+	 * converts a PImage to a Base64 encoded String
+	 * @param image - PImage to convert
+	 * @param format - the image format: <pre>ModelUtils.IMAGE_FORMAT_JPG</pre>("JPG") or <pre>ModelUtils.IMAGE_FORMAT_PNG</pre>("PNG")
+	 * @return Base64 encoded string representation of the image
+	 */
+	public static String toBase64(PImage image,String format){
+		if(!format.equals(ModelUtils.IMAGE_FORMAT_JPG) && !format.equals(ModelUtils.IMAGE_FORMAT_PNG)){
+			System.err.println("Invalid format type: " + format + "\nexpected formats are ModelUtils.IMAGE_FORMAT_JPG or ModelUtils.IMAGE_FORMAT_PNG");
+			return null;
+		}
+		String mimeType = "";
+		if(format.equals(ModelUtils.IMAGE_FORMAT_JPG)){
+			mimeType = "image/jpeg";
+		}
+		if(format.equals(ModelUtils.IMAGE_FORMAT_PNG)){
+			mimeType = "image/png";
+		}
+		String result = null;
+		BufferedImage jImage = (BufferedImage)image.getNative();
+		ByteArrayOutputStream encodedBytesStream = new ByteArrayOutputStream();
 		try {
-			bImageFromConvert = ImageIO.read(in);
-			BufferedImage convertedImg = new BufferedImage(bImageFromConvert.getWidth(),     bImageFromConvert.getHeight(), BufferedImage.TYPE_INT_ARGB);
-			convertedImg.getGraphics().drawImage(bImageFromConvert, 0, 0, null);
-			result = new PImage(convertedImg);
+			ImageIO.write(jImage, format, encodedBytesStream);
+			byte[] bytes = encodedBytesStream.toByteArray();
+			result = "data:" + mimeType + ";base64," + DatatypeConverter.printBase64Binary(bytes);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}	 
+		}
 		return result;
+	}
+	
+	/**
+	 * converts a Base64 encoded String to a PImage
+	 * 
+	 * @param runwayImageString - the Base64 encoded image String from RunwayML
+	 * @return - the PImage decoded from the string
+	 */
+	public static PImage fromBase64(String runwayImageString){
+		PImage result = null;
+	    
+	    try {
+	    	String base64Image = runwayImageString.split(",")[1];
+	    	byte[] decodedBytes = DatatypeConverter.parseBase64Binary(base64Image);
+	    	
+	    	if(decodedBytes == null){
+	    		return null;
+	    	}
+	      
+	    	ByteArrayInputStream in = new ByteArrayInputStream(decodedBytes);
+	    	result = new PImage(ImageIO.read(in));
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    }
+	    
+	    return result;
 	}
 	
 	
