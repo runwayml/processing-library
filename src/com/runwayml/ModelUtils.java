@@ -8,8 +8,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
 
-import org.apache.commons.codec.binary.Base64;
-
 import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.data.JSONArray;
@@ -129,16 +127,21 @@ public class ModelUtils {
 			System.err.println("Invalid format type: " + format + "\nexpected formats are ModelUtils.IMAGE_FORMAT_JPG or ModelUtils.IMAGE_FORMAT_PNG");
 			return null;
 		}
+		
 		String mimeType = "";
+		
 		if(format.equals(ModelUtils.IMAGE_FORMAT_JPG)){
 			mimeType = "image/jpeg";
 		}
+		
 		if(format.equals(ModelUtils.IMAGE_FORMAT_PNG)){
 			mimeType = "image/png";
 		}
+		
 		String result = null;
 		BufferedImage jImage = (BufferedImage)image.getNative();
 		ByteArrayOutputStream encodedBytesStream = new ByteArrayOutputStream();
+		
 		try {
 			ImageIO.write(jImage, format, encodedBytesStream);
 			byte[] bytes = encodedBytesStream.toByteArray();
@@ -146,6 +149,7 @@ public class ModelUtils {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		return result;
 	}
 	
@@ -159,6 +163,7 @@ public class ModelUtils {
 		PImage result = null;
 	    
 	    try {
+	    	// remove mime type, access encoded pixels only
 	    	String base64Image = runwayImageString.split(",")[1];
 	    	byte[] decodedBytes = DatatypeConverter.parseBase64Binary(base64Image);
 	    	
@@ -168,6 +173,7 @@ public class ModelUtils {
 	      
 	    	ByteArrayInputStream in = new ByteArrayInputStream(decodedBytes);
 	    	result = new PImage(ImageIO.read(in));
+	    	
 	    } catch (IOException e) {
 	    	e.printStackTrace();
 	    }

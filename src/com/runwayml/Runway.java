@@ -1,17 +1,10 @@
 package com.runwayml;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
-import javax.imageio.ImageIO;
-
-import org.apache.commons.codec.binary.Base64;
-
-import processing.core.*;
+import processing.core.PApplet;
+import processing.core.PImage;
 import processing.data.JSONObject;
 
 /**
@@ -134,7 +127,8 @@ public class Runway {
 		try {
 	      return parent.getClass().getMethod(name, argumentType);
 	    } catch (Exception e) {
-	    	e.printStackTrace();
+	    	System.out.println("couldn't find " + name + " callback in sketch, ignoring data");
+	    	//e.printStackTrace();
 	    }
 	    return null;
 	 }
