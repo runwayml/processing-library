@@ -71,19 +71,19 @@ void drawPoseNetParts(JSONObject data){
   if (data != null) {
     JSONArray humans = data.getJSONArray("poses");
     for(int h = 0; h < humans.size(); h++) {
-      JSONObject human = humans.getJSONObject(h);
-      JSONArray keypoints = human.getJSONArray("keypoints");
+      JSONArray keypoints = humans.getJSONArray(h);
       // Now that we have one human, let's draw its body parts
       for(int i = 0 ; i < connections.length; i++){
         
-        JSONObject startPart = keypoints.getJSONObject(connections[i][0]);
-        JSONObject endPart   = keypoints.getJSONObject(connections[i][1]);
+        JSONArray startPart = keypoints.getJSONArray(connections[i][0]);
+        JSONArray endPart   = keypoints.getJSONArray(connections[i][1]);
+        // extract floats fron JSON array and scale normalized value to sketch size
+        float startX = startPart.getFloat(0) * width;
+        float startY = startPart.getFloat(1) * height;
+        float endX   = endPart.getFloat(0) * width;
+        float endY   = endPart.getFloat(1) * height;
         
-        JSONObject startPosition = startPart.getJSONObject("position");
-        JSONObject endPosition   = endPart.getJSONObject("position");
-        
-        line(startPosition.getFloat("x"),startPosition.getFloat("y"),
-             endPosition.getFloat("x"),endPosition.getFloat("y"));
+        line(startX,startY,endX,endY);
       }
     }
   }

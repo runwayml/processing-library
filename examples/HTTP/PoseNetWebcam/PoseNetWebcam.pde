@@ -52,8 +52,14 @@ int[][] connections = {
   {ModelUtils.POSE_LEFT_KNEE_INDEX,ModelUtils.POSE_LEFT_ANKLE_INDEX}
 };
 
-//reference to the camera
+// reference to the camera
 Capture camera;
+
+// periocally to be updated using millis()
+int lastMillis;
+// how often should the above be updated and a time action take place ?
+// takes about 100-200ms for Runway to process a 600x400 PoseNet frame
+int waitTime = 210;
 
 void setup(){
   // match sketch size to default model camera setup
@@ -68,36 +74,58 @@ void setup(){
   // setup camera
   camera = new Capture(this,640,480);
   camera.start();
+  // setup timer
+  lastMillis = millis();
 }
 
 void draw(){
+  // update timer
+  int currentMillis = millis();
+  // if the difference between current millis and last time we checked past the wait time
+  if(currentMillis - lastMillis >= waitTime){
+    // call the timed function
+    sendFrameToRunway();
+    // update lastMillis, preparing for another wait
+    lastMillis = currentMillis;
+  }
   background(0);
   // draw webcam image
   image(camera,0,0);
   // manually draw PoseNet parts
-  drawPoseParts(data);
-  // usage text
-  text("press 'SPACE' to query image",5,15);
+  drawPoseNetParts(data);
 }
 
-void drawPoseParts(JSONObject data){
+void sendFrameToRunway(){
+  // nothing to send if there's no new camera data available
+  if(camera.available() == false){
+    return;
+  }
+  // read a new frame
+  camera.read();
+  // crop image to Runway input format (600x400)
+  PImage image = camera.get(0,0,600,400);
+  // query Runway with webcam image 
+  runway.query(image);
+}
+
+void drawPoseNetParts(JSONObject data){
   // Only if there are any humans detected
   if (data != null) {
     JSONArray humans = data.getJSONArray("poses");
     for(int h = 0; h < humans.size(); h++) {
-      JSONObject human = humans.getJSONObject(h);
-      JSONArray keypoints = human.getJSONArray("keypoints");
+      JSONArray keypoints = humans.getJSONArray(h);
       // Now that we have one human, let's draw its body parts
       for(int i = 0 ; i < connections.length; i++){
         
-        JSONObject startPart = keypoints.getJSONObject(connections[i][0]);
-        JSONObject endPart   = keypoints.getJSONObject(connections[i][1]);
+        JSONArray startPart = keypoints.getJSONArray(connections[i][0]);
+        JSONArray endPart   = keypoints.getJSONArray(connections[i][1]);
+        // extract floats fron JSON array and scale normalized value to sketch size
+        float startX = startPart.getFloat(0) * width;
+        float startY = startPart.getFloat(1) * height;
+        float endX   = endPart.getFloat(0) * width;
+        float endY   = endPart.getFloat(1) * height;
         
-        JSONObject startPosition = startPart.getJSONObject("position");
-        JSONObject endPosition   = endPart.getJSONObject("position");
-        
-        line(startPosition.getFloat("x"),startPosition.getFloat("y"),
-             endPosition.getFloat("x"),endPosition.getFloat("y"));
+        line(startX,startY,endX,endY);
       }
     }
   }
@@ -118,17 +146,4 @@ public void runwayInfoEvent(JSONObject info){
 // if anything goes wrong
 public void runwayErrorEvent(String message){
   println(message);
-}
-
-void captureEvent(Capture camera){
-  camera.read();
-}
-
-void keyPressed(){
-  if(key == ' '){
-    // crop image to Runway input format (600x400)
-    PImage image = camera.get(0,0,600,400);
-    // query Runway with webcam image 
-    runway.query(image);
-  }
 }

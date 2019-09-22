@@ -43,7 +43,7 @@ void setup(){
 void draw(){
   background(0);
   // use the utiliy class to draw PoseNet parts
-  runway.drawPoseParts(data,10);
+  ModelUtils.drawPoseParts(data,g,10);
 }
 
 // this is called when new Runway data is available
