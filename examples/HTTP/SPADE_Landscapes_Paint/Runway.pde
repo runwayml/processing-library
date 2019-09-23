@@ -7,6 +7,7 @@ PImage runwayResult;
 
 // For this example we only care about label to RGB values associations
 HashMap<String,Integer> labelToColor = new HashMap<String,Integer>();
+HashMap<String,Integer> labelToId = new HashMap<String,Integer>();
 // store just the SPADE-COCO labels
 String[] labels;
 
@@ -54,7 +55,7 @@ public void runwayInfoEvent(JSONObject info){
     JSONObject labelToId = firstInput.getJSONObject("labelToId");
     // allocate labels array
     labels = new String[labelToId.size()];
-    println(labels.length);
+    int labelIndex = 0;
     // iterate through each key in the JSON object
     for(Object labelObj : labelToColorJSON.keys()){
       // cast the key from Object to String
@@ -63,9 +64,7 @@ public void runwayInfoEvent(JSONObject info){
       int[] rgbValues = labelToColorJSON.getJSONArray(label).getIntArray();
       // populate the labelToColour lookup table / hashmap 
       labelToColor.put(label,color(rgbValues[0],rgbValues[1],rgbValues[2]));
-      // populate the labels array
-      int id = labelToId.getInt(label);
-      labels[id] = label;
+      labels[labelIndex++] = label;
     }
     // update color to the first label
     updateLabelColor();

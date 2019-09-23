@@ -14,7 +14,7 @@ import processing.data.JSONObject;
 
 public class RunwayHTTP extends Runway {
 	
-	private static int HTTP_TIMEOUT_SECONDS = 30;
+	private static int HTTP_TIMEOUT_SECONDS = 90;
 	
 	public static final int PORT		  = 8000;
 	

@@ -62,7 +62,7 @@ void draw(){
 void mouseDragged(){
   drawing.beginDraw();
   drawing.fill(currentLabelColor);
-  drawing.ellipse(constrain(mouseX,0,640),constrain(mouseY,0,360),21,21);
+  drawing.ellipse(constrain(mouseX,0,640),constrain(mouseY,0,360),36,36);
   drawing.endDraw();
 }
 
