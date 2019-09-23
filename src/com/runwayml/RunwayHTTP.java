@@ -14,7 +14,9 @@ import processing.data.JSONObject;
 
 public class RunwayHTTP extends Runway {
 	
-	public static final int PORT	= 8000;
+	private static int HTTP_TIMEOUT_SECONDS = 30;
+	
+	public static final int PORT		  = 8000;
 	
 	public static final String QUERY	  = "/query";
 	public static final String DATA 	  = "/data";
@@ -24,6 +26,7 @@ public class RunwayHTTP extends Runway {
 	private String serverAddress;
 	
 	private boolean autoUpdate = true;
+	
 	
 	/**
 	 * a Constructor, usually called in the setup() method in your sketch to
@@ -123,39 +126,13 @@ public class RunwayHTTP extends Runway {
 	}
 	
 	/**
-	 * send a query to Runway
+	 * send a query to Runway (defaults to jpg encoding format and "image" JSON object key)
 	 * 
 	 * @param input - input image for Runway to query (assumes image is resized/cropped to dimensions set in model)
 	 */
 	@Override
 	public void query(PImage input){
-		String base64 = ModelUtils.toBase64(input);
-	    
-	    OkHttpClient client = new OkHttpClient();
-	    
-	    MediaType mediaType = MediaType.parse("application/json");
-	    RequestBody body = RequestBody.create(mediaType,"{\"image\":\""+base64+"\"}");
-	    
-	    Request request = new Request.Builder()
-	    .url("http://localhost:8000/query")
-	    .post(body)
-	    .addHeader("Content-Type", "application/json")
-	    .addHeader("Accept", "*/*")
-	    .addHeader("Accept-Encoding", "gzip, deflate")
-	    .addHeader("Connection", "keep-alive")
-	    .build();
-	    
-	    try{
-	      Response response = client.newCall(request).execute();
-	      JSONObject data = JSONObject.parse(response.body().string());
-	      dispatchData(data);
-	    }catch(IOException e){
-	      e.printStackTrace();
-	    }catch (Exception e) {
-	    	System.err.println("error parsing JSON from /data HTTP route");
-	    	e.printStackTrace();
-	    	this.onDataEventMethod = null;
-	    }
+		query(input, ModelUtils.IMAGE_FORMAT_JPG, "image");
 	}
 	
 	/**
@@ -167,16 +144,16 @@ public class RunwayHTTP extends Runway {
 	 */
 	public void query(PImage input,String format,String key){
 		OkHttpClient client = new OkHttpClient.Builder()
-		        .connectTimeout(30, TimeUnit.SECONDS)
-		        .writeTimeout(30, TimeUnit.SECONDS)
-		        .readTimeout(30, TimeUnit.SECONDS)
+		        .connectTimeout(HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+		        .writeTimeout(HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+		        .readTimeout(HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
 		        .build();
 		
 	    MediaType mediaType = MediaType.parse("application/json");
 	    RequestBody body = RequestBody.create(mediaType,ModelUtils.toRunwayImageQuery(input, format, key));
 	    
 	    Request request = new Request.Builder()
-	    .url("http://localhost:8000/query")
+	    .url(serverAddress + QUERY)
 	    .post(body)
 	    .addHeader("Content-Type", "application/json")
 	    .addHeader("Accept", "*/*")
