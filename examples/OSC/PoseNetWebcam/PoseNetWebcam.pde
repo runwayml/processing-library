@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Runway AI Examples
+// Copyright (C) 2019 Runway AI Examples
 // 
 // This file is part of Runway AI Examples.
 // 
@@ -24,10 +24,9 @@
 // Receive OSC messages from Runway
 // Running PoseNet model
 // original example by Anastasis Germanidis, adapted by George Profenza
-
-// import OSC libraries
 import oscP5.*;
-import netP5.*;
+// import video library
+import processing.video.*;
 // import Runway library
 import com.runwayml.*;
 // reference to runway instance
@@ -53,6 +52,15 @@ int[][] connections = {
   {ModelUtils.POSE_LEFT_KNEE_INDEX,ModelUtils.POSE_LEFT_ANKLE_INDEX}
 };
 
+// reference to the camera
+Capture camera;
+
+// periocally to be updated using millis()
+int lastMillis;
+// how often should the above be updated and a time action take place ?
+// takes about 100-200ms for Runway to process a 600x400 PoseNet frame
+int waitTime = 210;
+
 void setup(){
   // match sketch size to default model camera setup
   size(600,400);
@@ -61,12 +69,41 @@ void setup(){
   strokeWeight(3);
   // setup Runway
   runway = new RunwayOSC(this);
+  // setup camera
+  camera = new Capture(this,640,480);
+  camera.start();
+  // setup timer
+  lastMillis = millis();
 }
 
 void draw(){
+  // update timer
+  int currentMillis = millis();
+  // if the difference between current millis and last time we checked past the wait time
+  if(currentMillis - lastMillis >= waitTime){
+    // call the timed function
+    sendFrameToRunway();
+    // update lastMillis, preparing for another wait
+    lastMillis = currentMillis;
+  }
   background(0);
+  // draw webcam image
+  image(camera,0,0);
   // manually draw PoseNet parts
   drawPoseNetParts(data);
+}
+
+void sendFrameToRunway(){
+  // nothing to send if there's no new camera data available
+  if(camera.available() == false){
+    return;
+  }
+  // read a new frame
+  camera.read();
+  // crop image to Runway input format (600x400)
+  PImage image = camera.get(0,0,600,400);
+  // query Runway with webcam image 
+  runway.query(image);
 }
 
 void drawPoseNetParts(JSONObject data){
@@ -107,19 +144,4 @@ public void runwayInfoEvent(JSONObject info){
 // if anything goes wrong
 public void runwayErrorEvent(String message){
   println(message);
-}
-
-// Note: if the RunwayModel was stopped and resumed while Processing is running
-// it's best to reconnect to it via OSC
-void keyPressed(){
-  switch(key) {
-    case('c'):
-      /* connect to Runway */
-      runway.connect();
-      break;
-    case('d'):
-      /* disconnect from Runway */
-      runway.disconnect();
-      break;
-  }
 }

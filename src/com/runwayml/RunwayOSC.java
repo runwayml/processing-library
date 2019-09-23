@@ -81,14 +81,21 @@ public class RunwayOSC extends Runway {
 	
 	/**
 	 * send a /query with a PImage sencoded as Base64 string within a JSON string (<pre>{"image": <base 64 image>}</pre>)
-	 * @param image - the PImage to query the Runway model with (<strong>Must</strong> be of the dimensions the model expects)
+	 * @param input - the PImage to query the Runway model with (<strong>Must</strong> be of the dimensions the model expects)
 	 */
-	public void queryImage(PImage image){
+	@Override
+	public void query(PImage input) {
 		oscP5.send(new OscMessage(QUERY)
-					   .add(ModelUtils.toRunwayImageQuery(image)), 
+				.add(ModelUtils.toRunwayImageQuery(input)), 
 				runwayNetAddress);
 	}
 	
+	public void query(PImage input,String format,String key){
+		oscP5.send(new OscMessage(QUERY)
+				.add(ModelUtils.toRunwayImageQuery(input,format,key)), 
+				runwayNetAddress);
+	}
+
 	public void oscEvent(OscMessage message) {
 		// check info address and type tag
 		if(message.checkAddrPattern(INFO) && message.checkTypetag("s")){
