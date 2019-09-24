@@ -23,9 +23,8 @@
 // PoseNet Demo:
 // Receive OSC messages from Runway
 // Running PoseNet model
-// original example by Anastasis Germanidis, adapted by George Profenza
-
-// import OSC libraries
+// original example by Joel Matthys @jwmatthys, adapted by George Profenza
+// import OSC library
 import oscP5.*;
 // import Runway library
 import com.runwayml.*;
@@ -38,6 +37,8 @@ JSONObject data;
 void setup(){
   // match sketch size to default model camera setup
   size(600,400);
+  fill(9,130,250);
+  noStroke();
   // setup Runway
   runway = new RunwayOSC(this);
 }
@@ -45,7 +46,19 @@ void setup(){
 void draw(){
   background(0);
   // use the utiliy class to draw PoseNet parts
-  runway.drawPoseNetParts(data,10);
+  if(data != null){
+    JSONArray landmarks = data.getJSONArray("points");
+    if (landmarks != null)
+    {
+      for (int k = 0; k < landmarks.size(); k++) {
+        // Body parts are relative to width and weight of the input
+        JSONArray point = landmarks.getJSONArray(k);
+        float x = point.getFloat(0);
+        float y = point.getFloat(1);
+        ellipse(x * width, y * height, 10, 10);
+      }
+    }
+  }
 }
 
 // this is called when new Runway data is available
