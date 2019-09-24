@@ -1,9 +1,9 @@
 package com.runwayml;
 
-import java.util.regex.Pattern;
-
-import netP5.*;
-import oscP5.*;
+import netP5.NetAddress;
+import oscP5.OscMessage;
+import oscP5.OscP5;
+import oscP5.OscProperties;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.data.JSONObject;
@@ -90,12 +90,31 @@ public class RunwayOSC extends Runway {
 				runwayNetAddress);
 	}
 	
+	/**
+	 * Send a /query OSC message to Runway with the passed image Base64 encoded with the selected format and as the value of the selected JSON key
+	 * @param input - PImage to encode and send
+	 * @param format - ModelUtils.IMAGE_FORMAT_JPG or ModelUtils.IMAGE_FORMAT_PNG
+	 * @param key - the key of the JSON object for the image value
+	 */
 	public void query(PImage input,String format,String key){
 		oscP5.send(new OscMessage(QUERY)
 				.add(ModelUtils.toRunwayImageQuery(input,format,key)), 
 				runwayNetAddress);
 	}
-
+	
+	/**
+	 * @param input - JSON formatted string for the selected model
+	 */
+	@Override
+	public void query(String input){
+		oscP5.send(new OscMessage(QUERY).add(input), runwayNetAddress);
+	}
+	
+	/**
+	 * called internally by OscP5 library
+	 * 
+	 * @param message
+	 */
 	public void oscEvent(OscMessage message) {
 		// check info address and type tag
 		if(message.checkAddrPattern(INFO) && message.checkTypetag("s")){
@@ -105,7 +124,6 @@ public class RunwayOSC extends Runway {
 				System.err.println("error parsing JSON from /info OSC message");
 				e.printStackTrace();
 			}
-			
 		}
 		
 		// check error address and type tag
@@ -116,6 +134,7 @@ public class RunwayOSC extends Runway {
 				System.err.println("error accessing string from /error OSC message");
 				e.printStackTrace();
 			}
+			
 		}
 		// check data address and type tag
 		if(message.checkAddrPattern(DATA) && message.checkTypetag("s")){

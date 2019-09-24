@@ -27,6 +27,8 @@ public class RunwayHTTP extends Runway {
 	
 	private boolean autoUpdate = true;
 	
+	private OkHttpClient client;
+	private MediaType mediaType = MediaType.parse("application/json");
 	
 	/**
 	 * a Constructor, usually called in the setup() method in your sketch to
@@ -69,6 +71,12 @@ public class RunwayHTTP extends Runway {
 		}
 		// register pre which is called once every frame before draw() kicks in
 		parent.registerMethod("pre", this);
+		// setup client
+		client = new OkHttpClient.Builder()
+		        .connectTimeout(HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+		        .writeTimeout(HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+		        .readTimeout(HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+		        .build();
 	}	
 	
 	public void pre(){
@@ -126,7 +134,7 @@ public class RunwayHTTP extends Runway {
 	}
 	
 	/**
-	 * send a query to Runway (defaults to jpg encoding format and "image" JSON object key)
+	 * send an image query to Runway (defaults to jpg encoding format and "image" JSON object key)
 	 * 
 	 * @param input - input image for Runway to query (assumes image is resized/cropped to dimensions set in model)
 	 */
@@ -136,21 +144,27 @@ public class RunwayHTTP extends Runway {
 	}
 	
 	/**
-	 * send a query to Runway
+	 * send an image query to Runway
 	 * 
 	 * @param input - input image for Runway to query (assumes image is resized/cropped to dimensions set in model)
 	 * @param format - the image format: <pre>ModelUtils.IMAGE_FORMAT_JPG</pre>("JPG") or <pre>ModelUtils.IMAGE_FORMAT_PNG</pre>("PNG")
 	 * @param key - the JSON key for the Base64 image
 	 */
+	@Override
 	public void query(PImage input,String format,String key){
-		OkHttpClient client = new OkHttpClient.Builder()
-		        .connectTimeout(HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
-		        .writeTimeout(HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
-		        .readTimeout(HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
-		        .build();
-		
-	    MediaType mediaType = MediaType.parse("application/json");
-	    RequestBody body = RequestBody.create(mediaType,ModelUtils.toRunwayImageQuery(input, format, key));
+		sendQuery(ModelUtils.toRunwayImageQuery(input, format, key));
+	}
+	
+	/**
+	 *	send a JSON string query to Runway
+	 */
+	@Override 
+	public void query(String input){
+		sendQuery(input);
+	}
+	
+	private void sendQuery(String jsonPayload){
+	    RequestBody body = RequestBody.create(mediaType,jsonPayload);
 	    
 	    Request request = new Request.Builder()
 	    .url(serverAddress + QUERY)
@@ -162,9 +176,11 @@ public class RunwayHTTP extends Runway {
 	    .build();
 	    
 	    try{
+	    	
 	      Response response = client.newCall(request).execute();
 	      JSONObject data = JSONObject.parse(response.body().string());
 	      dispatchData(data);
+	      
 	    }catch(IOException e){
 	      e.printStackTrace();
 	    }catch (Exception e) {

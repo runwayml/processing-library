@@ -45,12 +45,35 @@ public class Runway {
 	
 	/**
 	 * send a query to Runway
-	 * 
+	 * <strong>Don't call this on a Runway instace, but a Runway sublcass instead.</strong>
 	 * @param input - input image for Runway to query (assumes image is resized/cropped to dimensions set in model)
 	 */
 	public void query(PImage input){
 		
 	}
+	
+	/**
+	 * send an image query to Runway with specific format (JPG/PNG) and JSON key to hold the Base64 encoded image
+	 * 
+	 * <strong>Don't call this on a Runway instace, but a Runway sublcass instead.</strong>
+	 * @param input
+	 * @param format
+	 * @param key
+	 */
+	public void query(PImage input,String format,String key){
+		
+	}
+	
+	/**
+	 * send a query to Runway
+	 * <strong>Don't call this on a Runway instace, but a Runway sublcass instead.</strong>
+	 * @param input - JSON formatted input
+	 */
+	public void query(String input){
+		
+	}
+	
+	
 	
 	/**
 	 * if <pre>runwayInfoEvent</pre> is present it calls it passing the info <pre>JSONObject</pre>
