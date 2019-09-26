@@ -20,9 +20,9 @@
 // RUNWAY
 // www.runwayapp.ai
 
-// PoseNet Demo:
+// CycleGAN
 // Receive OSC messages from Runway
-// Running PoseNet model
+// Running CycleGAN model
 // example by George Profenza
 
 // import video library
@@ -43,8 +43,7 @@ color BLUE = color(9,130,250);
 // periocally to be updated using millis()
 int lastMillis;
 // how often should the above be updated and a time action take place ?
-// OpenPifPaf 6.5-7.0 seconds on CPU to process a frame
-int waitTime = 7000;
+int waitTime = 1000;
 
 // reference to the camera
 Capture camera;
@@ -54,7 +53,7 @@ String status = "waiting ~"+(waitTime/1000)+"s";
 
 void setup(){
   // match sketch size to default model camera setup
-  size(1640,666);
+  size(1200,400);
   // setup Runway
   runway = new RunwayHTTP(this);
   // update manually
@@ -80,12 +79,10 @@ void draw(){
   }
   // draw image received from Runway
   if(runwayResult != null){
-    image(runwayResult,640,0);
+    image(runwayResult,600,0);
   }
   // draw camera feed
-  image(camera,0,0);
-  // manually draw PoseNet parts
-  drawOpenPifPafParts(humans);
+  image(camera,0,0,600,400);
   // display status
   text(status,5,15);
 }
@@ -103,34 +100,6 @@ void sendFrameToRunway(){
   runway.query(image);
 }
 
-void drawOpenPifPafParts(JSONArray humans){
-  // Only if there are any humans detected
-  if (humans != null) {
-    for(int h = 0; h < humans.size(); h++) {
-      JSONObject human = humans.getJSONObject(h);
-      JSONArray keypoints = human.getJSONArray("keypoints");
-      JSONArray boundingBox = human.getJSONArray("bbox");
-      // Now that we have one human, let's draw its body parts
-      noStroke();
-      fill(BLUE);
-      // iterate through keypoints: a 1D array of alternating x1,y1,score1,x2,y2,score2,etc. 
-      for(int k = 0 ; k < keypoints.size() - 1; k += 3){
-        float x = keypoints.getFloat(k);
-        float y = keypoints.getFloat(k + 1);
-        //float score = keypoints.getFloat(k + 2);
-        // if keypoints have been found, render
-        if(x != 0.0 && y != 0.0){
-          ellipse(x,y,9,9);
-        }
-      }
-      // render bounding box
-      stroke(BLUE);
-      strokeWeight(3);
-      noFill();
-      rect(boundingBox.getFloat(0),boundingBox.getFloat(1),boundingBox.getFloat(2),boundingBox.getFloat(3));
-    }
-  }
-}
 
 // this is called when new Runway data is available
 void runwayDataEvent(JSONObject runwayData){
@@ -139,12 +108,6 @@ void runwayDataEvent(JSONObject runwayData){
   // try to decode the image from
   try{
     runwayResult = ModelUtils.fromBase64(base64ImageString);
-  }catch(Exception e){
-    e.printStackTrace();
-  }
-  // get keypoints
-  try{
-    humans = JSONArray.parse(runwayData.getString("keypoints"));
   }catch(Exception e){
     e.printStackTrace();
   }
