@@ -19,15 +19,13 @@ public class Runway {
 
 	public final static String VERSION = "##library.prettyVersion##";
 	
-	public static String OSC	   = "OSC";
-	public static String HTTP 	   = "HTTP";
-	public static String SOCKET_IO = "Socket.io";
-	
+	// default host is localhost
 	public static String DEFAULT_HOST = "127.0.0.1";
 	
 	protected String host = DEFAULT_HOST;
 	protected int 	 port;
-	
+
+	// references to callbacks
 	protected Method onInfoEventMethod;
 	protected Method onDataEventMethod;
 	protected Method onErrorEventMethod;
@@ -36,11 +34,20 @@ public class Runway {
 	protected static final Pattern IPV4_PATTERN = Pattern.compile(
 	        "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
 	
+	/**
+	 * connects Runway instance to a Processing sketch, holding a reference to the sketch 
+	 * and finding / referencing callbacks
+	 *  
+	 * @param parent
+	 */
 	protected void setupPApplet(PApplet parent){
+		
 		this.parent = parent;
+		
 		this.onInfoEventMethod = findCallback("runwayInfoEvent",JSONObject.class);
 		this.onDataEventMethod = findCallback("runwayDataEvent",JSONObject.class);
 		this.onErrorEventMethod= findCallback("runwayErrorEvent",String.class);
+		
 	}
 	
 	/**
@@ -113,6 +120,10 @@ public class Runway {
 		}
 	}
 	
+	/**
+	 * if <pre>runwayDataEvent</pre> is present it calls it passing inference data
+	 * @param data
+	 */
 	protected void dispatchData(JSONObject data){
 		// if the callback isn't null
 		if (onDataEventMethod != null) {
@@ -128,10 +139,6 @@ public class Runway {
 		}
 	}
 	
-	public void welcome() {
-		System.out.println("##library.name## ##library.prettyVersion## by ##author##");
-	}
-	
 	/**
 	 * return the version of the Library.
 	 * 
@@ -141,6 +148,11 @@ public class Runway {
 		return VERSION;
 	}
 	
+	/**
+	 * shorthand for drawing PoseNet parts into the sketch's default graphics buffer 
+	 * @param data - the JSONObject received from Runway
+	 * @param ellipseSize - how large should joints be rendered
+	 */
 	public void drawPoseNetParts(JSONObject data,float ellipseSize){
 		ModelUtils.drawPoseParts(data, parent.g, ellipseSize);
 	}

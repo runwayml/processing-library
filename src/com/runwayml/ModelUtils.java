@@ -39,7 +39,7 @@ public class ModelUtils {
 	
 	/**
 	 * Traverses Pose Net poses and keypoints and draws ellipses for each keypoint position
-	 * @param data - the Runway PoseNet JSON object 
+	 * @param data - the Runway Pose JSON object 
 	 * @param g	   - the PGraphics instance to draw into
 	 * @param ellipseSize - dimensions in pixels of each keypoint position ellipse diameter
 	 */
