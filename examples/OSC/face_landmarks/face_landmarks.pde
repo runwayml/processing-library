@@ -20,9 +20,9 @@
 // RUNWAY
 // www.runwayapp.ai
 
-// PoseNet Demo:
+// face_landmarks Demo:
 // Receive OSC messages from Runway
-// Running PoseNet model
+// Running face_landmarks model
 // original example by Joel Matthys @jwmatthys, adapted by George Profenza
 // import OSC library
 import oscP5.*;

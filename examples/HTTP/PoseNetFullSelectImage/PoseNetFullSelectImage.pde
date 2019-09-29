@@ -25,13 +25,10 @@
 // Running PoseNet model
 // original example by Anastasis Germanidis, adapted by George Profenza
 
-// import OSC libraries
-import oscP5.*;
-import netP5.*;
 // import Runway library
 import com.runwayml.*;
 // reference to runway instance
-RunwayOSC runway;
+RunwayHTTP runway;
 
 // This array will hold all the humans detected
 JSONObject data;
@@ -53,6 +50,8 @@ int[][] connections = {
   {ModelUtils.POSE_LEFT_KNEE_INDEX,ModelUtils.POSE_LEFT_ANKLE_INDEX}
 };
 
+PImage image;
+
 void setup(){
   // match sketch size to default model camera setup
   size(600,400);
@@ -60,11 +59,31 @@ void setup(){
   stroke(9,130,250);
   strokeWeight(3);
   // setup Runway
-  runway = new RunwayOSC(this);
+  runway = new RunwayHTTP(this);
+  // stop auto-updates
+  runway.setAutoUpdate(false);
+  selectInput("Select a file to process:", "fileSelected");
+}
+
+void fileSelected(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    println("User selected " + selection.getAbsolutePath());
+    // load image
+    image = loadImage(selection.getAbsolutePath());
+    // resize sketch
+    surface.setSize(image.width,image.height);
+    // send image to Runway
+    runway.query(image);
+  }
 }
 
 void draw(){
   background(0);
+  if(image != null){
+    image(image,0,0);
+  }
   // manually draw PoseNet parts
   drawPoseNetParts(data);
 }
@@ -107,19 +126,4 @@ public void runwayInfoEvent(JSONObject info){
 // if anything goes wrong
 public void runwayErrorEvent(String message){
   println(message);
-}
-
-// Note: if the RunwayModel was stopped and resumed while Processing is running
-// it's best to reconnect to it via OSC
-void keyPressed(){
-  switch(key) {
-    case('c'):
-      /* connect to Runway */
-      runway.connect();
-      break;
-    case('d'):
-      /* disconnect from Runway */
-      runway.disconnect();
-      break;
-  }
 }

@@ -1,3 +1,9 @@
+// Copyright (C) 2019 RunwayML Examples
+// 
+// This file is part of RunwayML Examples.
+// 
+// Runway-Examples is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 // 
@@ -11,8 +17,8 @@
 // 
 // ===========================================================================
 
-// RUNWAY
-// www.runwayapp.ai
+// RUNWAYML
+// www.runwayml.com
 
 // SPADE COCO Demo:
 // Receive HTTP messages from Runway

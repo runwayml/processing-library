@@ -20,6 +20,12 @@
 // RUNWAYML
 // www.runwayml.com
 
+// GPT2 Demo:
+// Send seed text and eceive OSC messages from Runway
+// Running GPT2 model
+// original example by https://github.com/maybay21, adapted by George Profenza 
+
+
 // import controlp5
 import controlP5.*;
 //create controlP5 instance

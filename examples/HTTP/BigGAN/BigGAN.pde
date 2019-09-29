@@ -23,6 +23,7 @@
 // BigGAN Demo:
 // Receive HTTP messages from Runway
 // Running BigGAN
+// example by George Profenza
 
 // import Runway library
 import com.runwayml.*;

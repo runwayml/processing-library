@@ -23,6 +23,7 @@
 // StyleGAN Demo:
 // Receive HTTP messages from Runway
 // Running StyleGAN
+// Example by George Profenza
 
 // import Runway library
 import com.runwayml.*;

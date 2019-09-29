@@ -25,26 +25,16 @@
 // Running CycleGAN model
 // example by George Profenza
 
-// import video library
-import processing.video.*;
-
 // import Runway library
 import com.runwayml.*;
 // reference to runway instance
 RunwayHTTP runway;
 
 PImage runwayResult; 
-
-// periocally to be updated using millis()
-int lastMillis;
-// how often should the above be updated and a time action take place ?
-int waitTime = 1000;
-
-// reference to the camera
-Capture camera;
-
 // status
-String status = "waiting ~"+(waitTime/1000)+"s";
+String status = "Press 'c' to select a content image";
+// image to send to Runway
+PImage contentImage;
 
 void setup(){
   // match sketch size to default model camera setup
@@ -53,48 +43,43 @@ void setup(){
   runway = new RunwayHTTP(this);
   // update manually
   runway.setAutoUpdate(false);
-  // setup camera
-  camera = new Capture(this,640,480);
-  camera.start();
-  // setup timer
-  lastMillis = millis();
+  
 }
 
 void draw(){
   background(0);
-  // update timer
-  int currentMillis = millis();
-  // if the difference between current millis and last time we checked past the wait time
-  if(currentMillis - lastMillis >= waitTime){
-    status = "sending image to Runway";
-    // call the timed function
-    sendFrameToRunway();
-    // update lastMillis, preparing for another wait
-    lastMillis = currentMillis;
+  // draw content image (if loaded)
+  if(contentImage != null){
+    image(contentImage,0,0);
   }
+  
   // draw image received from Runway
   if(runwayResult != null){
     image(runwayResult,600,0);
   }
-  // draw camera feed
-  image(camera,0,0,600,400);
+  
   // display status
   text(status,5,15);
 }
 
-void sendFrameToRunway(){
-  // nothing to send if there's no new camera data available
-  if(camera.available() == false){
-    return;
+void keyPressed(){
+  if(key == 'c'){
+    selectInput("Select a content image to process:", "contentImageSelected");
   }
-  // read a new frame
-  camera.read();
-  // crop image to Runway input format (600x400)
-  PImage image = camera.get(0,0,600,400);
-  // query Runway with webcam image 
-  runway.query(image);
 }
 
+void contentImageSelected(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    println("selected " + selection.getAbsolutePath());
+    contentImage = loadImage(selection.getAbsolutePath());
+    // resize image (adjust as needed)
+    contentImage.resize(600,400);
+    // send to Runway
+    runway.query(contentImage);
+  }
+}
 
 // this is called when new Runway data is available
 void runwayDataEvent(JSONObject runwayData){

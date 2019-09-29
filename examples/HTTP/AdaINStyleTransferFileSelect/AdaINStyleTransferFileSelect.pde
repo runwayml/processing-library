@@ -1,6 +1,6 @@
-// Copyright (C) 2018 Runway AI Examples
+// Copyright (C) 2019 RunwayML Examples
 // 
-// This file is part of Runway AI Examples.
+// This file is part of RunwayML Examples.
 // 
 // Runway-Examples is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,16 +17,13 @@
 // 
 // ===========================================================================
 
-// RUNWAY
-// www.runwayapp.ai
+// RUNWAYML
+// www.runwayml.com
 
 // AdaIN-Style-Transfer
 // Receive HTTP messages from Runway
 // Running AdaIN-Style-Transfer model
 // example by George Profenza
-
-// import video library
-import processing.video.*;
 
 // import Runway library
 import com.runwayml.*;
@@ -35,18 +32,11 @@ RunwayHTTP runway;
 
 PImage runwayResult;
 
-// periocally to be updated using millis()
-int lastMillis;
-// how often should the above be updated and a time action take place ?
-int waitTime = 1000;
-
-// reference to the camera
-Capture camera;
-
 // status
-String status = "waiting ~"+(waitTime/1000)+"s";
+String status = "";
 
 PImage styleImage;
+PImage contentImage;
 
 void setup(){
   // match sketch size to default model camera setup
@@ -55,24 +45,13 @@ void setup(){
   runway = new RunwayHTTP(this);
   // update manually
   runway.setAutoUpdate(false);
-  // setup camera
-  camera = new Capture(this,640,480);
-  camera.start();
-  // setup timer
-  lastMillis = millis();
 }
 
 void draw(){
   background(0);
-  // update timer
-  int currentMillis = millis();
-  // if the difference between current millis and last time we checked past the wait time
-  if(currentMillis - lastMillis >= waitTime){
-    status = "sending image to Runway";
-    // call the timed function
-    sendFrameToRunway();
-    // update lastMillis, preparing for another wait
-    lastMillis = currentMillis;
+  // draw content image (if loaded)
+  if(contentImage != null){
+    image(contentImage,0,0,600,400);
   }
   // draw style image (if loaded)
   if(styleImage != null){
@@ -82,19 +61,24 @@ void draw(){
   if(runwayResult != null){
     image(runwayResult,1200,0);
   }
-  // draw camera feed
-  image(camera,0,0,600,400);
+  
   // display status
-  text("Press SPACE to select a style image\n"+status,5,15);
+  text("Press 's' to select a style image\nPress 'c' to select a content image\nPress ' ' to send to Runway"+status,5,15);
 }
 
 void keyPressed(){
+  if(key == 's'){
+    selectInput("Select a style image to process:", "styleImageSelected");
+  }
+  if(key == 'c'){
+    selectInput("Select a content image to process:", "contentImageSelected");
+  }
   if(key == ' '){
-    selectInput("Select a file to process:", "fileSelected");
+    queryRunway();
   }
 }
 
-void fileSelected(File selection) {
+void styleImageSelected(File selection) {
   if (selection == null) {
     println("Window was closed or the user hit cancel.");
   } else {
@@ -105,28 +89,35 @@ void fileSelected(File selection) {
   }
 }
 
-void sendFrameToRunway(){
+void contentImageSelected(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    println("selected " + selection.getAbsolutePath());
+    contentImage = loadImage(selection.getAbsolutePath());
+    // resize image (adjust as needed)
+    contentImage.resize(600,400);
+  }
+}
+
+void queryRunway(){
   // skip if style image isn't loaded yet
   if(styleImage == null){
     return;
   }
-  // nothing to send if there's no new camera data available
-  if(camera.available() == false){
+  // skip if content image isn't loaded yet
+  if(contentImage == null){
     return;
   }
-  // read a new frame
-  camera.read();
-  // crop image to Runway input format (600x400)
-  PImage image = camera.get(0,0,600,400);
   // prepare input JSON data to send to Runway
   JSONObject input = new JSONObject();
   // set style image
   input.setString("style_image",ModelUtils.toBase64(styleImage));
   // set content image
-  input.setString("content_image",ModelUtils.toBase64(image));
-  // set preserve colour
+  input.setString("content_image",ModelUtils.toBase64(contentImage));
+  // set preserve colour option
   input.setBoolean("preserve_color",true);
-  // set alpha
+  // set alpha option
   input.setFloat("alpha",1.0);
   // query Runway
   runway.query(input.toString());

@@ -23,6 +23,7 @@
 // im2txt Demo:
 // Receive HTTP messages from Runway
 // Running im2txt model
+// Original example by Cris Valenzuela, Anastasis Germanidis, Gene Kogan, adapted by George Profenza
 
 // import Runway library
 import com.runwayml.*;

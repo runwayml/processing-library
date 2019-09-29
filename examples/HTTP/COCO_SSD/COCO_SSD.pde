@@ -84,7 +84,7 @@ void drawCaptions() {
   if(data == null){
     return;
   }
-  println(data);
+  
   // access boxes and labels JSON arrays within the result
   JSONArray boxes = data.getJSONArray("boxes");
   JSONArray labels = data.getJSONArray("labels");

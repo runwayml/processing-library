@@ -23,6 +23,8 @@
 // im2txt Demo:
 // Receive HTTP messages from Runway
 // Running im2txt model
+// Original example by Cris Valenzuela, Anastasis Germanidis, Gene Kogan, adapted by George Profenza
+
 // import OSC
 import oscP5.*;
 // import video library

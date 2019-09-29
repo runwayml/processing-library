@@ -25,8 +25,6 @@
 // Running COCO-SSD model
 // example by George Profenza
 
-// import video library
-import processing.video.*;
 // import Runway library
 import com.runwayml.*;
 // reference to runway instance
@@ -35,13 +33,9 @@ RunwayHTTP runway;
 // The data coming in from Runway as a JSON Object {}
 JSONObject data;
 
-// reference to the camera
-Capture camera;
-
-// periocally to be updated using millis()
-int lastMillis;
-// how often should the above be updated and a time action take place ?
-int waitTime = 1000;
+String status = "Press 'c' to select a content image";
+// image to send to Runway
+PImage contentImage;
 
 void setup() {
   size(600, 400);
@@ -52,30 +46,42 @@ void setup() {
   runway = new RunwayHTTP(this);
   // disable automatic polling: request data manually when a new frame is ready
   runway.setAutoUpdate(false);
-  // setup camera
-  camera = new Capture(this,640,480);
-  camera.start();
-  // setup timer
-  lastMillis = millis();
+  
 }
 
 void draw() {
-  // update timer
-  int currentMillis = millis();
-  // if the difference between current millis and last time we checked past the wait time
-  if(currentMillis - lastMillis >= waitTime){
-    // call the timed function
-    sendFrameToRunway();
-    // update lastMillis, preparing for another wait
-    lastMillis = currentMillis;
-  }
   background(0);
-  // draw webcam image
-  image(camera,0,0);
+  // draw content image (if loaded)
+  if(contentImage != null){
+    image(contentImage,0,0);
+  }
   
   // Display captions
   drawCaptions();
+  
+  // display status
+  text(status,5,15);
 }
+
+void keyPressed(){
+  if(key == 'c'){
+    selectInput("Select a content image to process:", "contentImageSelected");
+  }
+}
+
+void contentImageSelected(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    println("selected " + selection.getAbsolutePath());
+    contentImage = loadImage(selection.getAbsolutePath());
+    // resize image (adjust as needed)
+    contentImage.resize(600,400);
+    // send to Runway
+    runway.query(contentImage);
+  }
+}
+
 
 
 // A function to display the captions
@@ -105,19 +111,6 @@ void drawCaptions() {
     fill(255);
     text(className + " score: " + String.format("%.2f",score),x,y);
   }
-}
-
-void sendFrameToRunway(){
-  // nothing to send if there's no new camera data available
-  if(camera.available() == false){
-    return;
-  }
-  // read a new frame
-  camera.read();
-  // crop image to Runway input format (600x400)
-  PImage image = camera.get(0,0,600,400);
-  // query Runway with webcam image 
-  runway.query(image);
 }
 
 // this is called when new Runway data is available

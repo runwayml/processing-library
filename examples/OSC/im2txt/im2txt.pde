@@ -23,6 +23,7 @@
 // im2txt Demo:
 // Receive OSC messages from Runway
 // Running im2txt model
+// Original example by Cris Valenzuela, Anastasis Germanidis, Gene Kogan, adapted by George Profenza
 
 // Import OSC
 import oscP5.*;

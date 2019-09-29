@@ -19,6 +19,7 @@
 
 // RUNWAYML
 // www.runwayml.com
+// original example by https://github.com/maybay21, adapted by George Profenza
 
 // import controlp5
 import controlP5.*;

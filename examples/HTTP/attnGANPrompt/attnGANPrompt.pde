@@ -22,6 +22,8 @@
 
 // AttnGAN Demo
 // Send OSC text messages to Runway and generate images
+// example based on https://github.com/runwayml/processing/blob/master/attnGAN/attnGAN.pde adapted by George Profenza
+
 // import Runway library
 import com.runwayml.*;
 // reference to runway instance

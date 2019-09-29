@@ -1,6 +1,6 @@
-// Copyright (C) 2018 Runway AI Examples
+// Copyright (C) 2019 RunwayML Examples
 // 
-// This file is part of Runway AI Examples.
+// This file is part of RunwayML Examples.
 // 
 // Runway-Examples is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@
 // 
 // ===========================================================================
 
-// RUNWAY
-// www.runwayapp.ai
+// RUNWAYML
+// www.runwayml.com
 
-// AdaIN-Style-Transfer
+// Adaptive-Style-Transfer
 // Receive HTTP messages from Runway
-// Running AdaIN-Style-Transfer model
+// Running Adaptive-Style-Transfer model
 // example by George Profenza
 
 // import video library
@@ -46,11 +46,9 @@ Capture camera;
 // status
 String status = "waiting ~"+(waitTime/1000)+"s";
 
-PImage styleImage;
-
 void setup(){
   // match sketch size to default model camera setup
-  size(1800,400);
+  size(1200,400);
   // setup Runway
   runway = new RunwayHTTP(this);
   // update manually
@@ -74,42 +72,17 @@ void draw(){
     // update lastMillis, preparing for another wait
     lastMillis = currentMillis;
   }
-  // draw style image (if loaded)
-  if(styleImage != null){
-    image(styleImage,600,0);
-  }
   // draw image received from Runway
   if(runwayResult != null){
-    image(runwayResult,1200,0);
+    image(runwayResult,600,0);
   }
   // draw camera feed
   image(camera,0,0,600,400);
   // display status
-  text("Press SPACE to select a style image\n"+status,5,15);
-}
-
-void keyPressed(){
-  if(key == ' '){
-    selectInput("Select a file to process:", "fileSelected");
-  }
-}
-
-void fileSelected(File selection) {
-  if (selection == null) {
-    println("Window was closed or the user hit cancel.");
-  } else {
-    println("selected " + selection.getAbsolutePath());
-    styleImage = loadImage(selection.getAbsolutePath());
-    // resize image (adjust as needed)
-    styleImage.resize(600,400);
-  }
+  text(status,5,15);
 }
 
 void sendFrameToRunway(){
-  // skip if style image isn't loaded yet
-  if(styleImage == null){
-    return;
-  }
   // nothing to send if there's no new camera data available
   if(camera.available() == false){
     return;
@@ -118,25 +91,14 @@ void sendFrameToRunway(){
   camera.read();
   // crop image to Runway input format (600x400)
   PImage image = camera.get(0,0,600,400);
-  // prepare input JSON data to send to Runway
-  JSONObject input = new JSONObject();
-  // set style image
-  input.setString("style_image",ModelUtils.toBase64(styleImage));
-  // set content image
-  input.setString("content_image",ModelUtils.toBase64(image));
-  // set preserve colour
-  input.setBoolean("preserve_color",true);
-  // set alpha
-  input.setFloat("alpha",1.0);
   // query Runway
-  runway.query(input.toString());
+  runway.query(image,ModelUtils.IMAGE_FORMAT_JPG,"contentImage");
 }
-
 
 // this is called when new Runway data is available
 void runwayDataEvent(JSONObject runwayData){
   // point the sketch data to the Runway incoming data 
-  String base64ImageString = runwayData.getString("image");
+  String base64ImageString = runwayData.getString("stylizedImage");
   // try to decode the image from
   try{
     runwayResult = ModelUtils.fromBase64(base64ImageString);
