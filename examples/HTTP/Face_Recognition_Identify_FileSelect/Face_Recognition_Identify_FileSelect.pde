@@ -20,7 +20,7 @@
 // RUNWAYML
 // www.runwayml.com
 
-// Face Recognition Identify Demo:
+// Face Recognition Detect Demo:
 // Receive HTTP messages from Runway
 // Running Face-Recognition model
 
@@ -34,15 +34,10 @@ RunwayHTTP runway;
 // The data coming in from Runway as a JSON Object {}
 JSONObject data;
 
-// reference to the camera
-Capture camera;
-
-// periocally to be updated using millis()
-int lastMillis;
-// how often should the above be updated and a time action take place ?
-int waitTime = 1000;
-
+PImage inputImage;
 PImage labelImage;
+
+String status = "";
 
 void setup() {
   size(1200, 400);
@@ -53,53 +48,76 @@ void setup() {
   runway = new RunwayHTTP(this);
   // disable automatic polling: request data manually when a new frame is ready
   runway.setAutoUpdate(false);
-  // setup camera
-  camera = new Capture(this,640,480);
-  camera.start();
-  // setup timer
-  lastMillis = millis();
 }
 
 void draw() {
-  // update timer
-  int currentMillis = millis();
-  // if the difference between current millis and last time we checked past the wait time
-  if(currentMillis - lastMillis >= waitTime){
-    // call the timed function
-    sendFrameToRunway();
-    // update lastMillis, preparing for another wait
-    lastMillis = currentMillis;
-  }
   background(0);
-  // draw input image (if any)
+  
+  // Display label image if loaded
+  if(inputImage != null){
+    image(inputImage,0,0);
+  }
+  
+  // Display label image if loaded
   if(labelImage != null){
     image(labelImage,600,0);
   }
-  // draw webcam image
-  image(camera,0,0);
+  
+  // Display instructions
+  text("press 'i' to select an input image\npress 'l' to select a label image\npress SPACE to query Runway\n"+status,5,15);
   
   // Display captions
   drawCaptions();
-  
-  // Display instructions
-  text("press SPACE to select an input image",5,15);
 }
 
 void keyPressed(){
+  if(key == 'i'){
+    selectInput("Select an input image to process:", "inputImageSelected");
+  }
+  if(key == 'l'){
+    selectInput("Select a label image to process:", "labelImageSelected");
+  }
   if(key == ' '){
-    selectInput("Select a file to process:", "fileSelected");
+    status = "loading";
+    queryRunway();
   }
 }
 
-void fileSelected(File selection) {
+void inputImageSelected(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    println("selected " + selection.getAbsolutePath());
+    inputImage = loadImage(selection.getAbsolutePath());
+  }
+}
+
+void labelImageSelected(File selection) {
   if (selection == null) {
     println("Window was closed or the user hit cancel.");
   } else {
     println("selected " + selection.getAbsolutePath());
     labelImage = loadImage(selection.getAbsolutePath());
-    // resize image to 600x400
-    labelImage.resize(600,400);
   }
+}
+
+void queryRunway(){
+  // if there's no input image, don't send anything
+  if(inputImage == null){
+    return;
+  }
+  // if there's no label image, don't send anything
+  if(labelImage == null){
+    return;
+  }
+  // prepare input JSON object
+  JSONObject input = new JSONObject();
+  input.setString("input_image",ModelUtils.toBase64(inputImage));
+  input.setString("label_image",ModelUtils.toBase64(labelImage));
+  // request 75% match
+  input.setFloat("match_tolerance",0.95);
+  // query Runway with webcam image and input image
+  runway.query(input.format(-1));
 }
 
 // A function to display the captions
@@ -108,7 +126,7 @@ void drawCaptions() {
   if(data == null){
     return;
   }
-  println(data);
+  status = "";
   // access boxes and labels JSON arrays within the result
   JSONArray results = data.getJSONArray("results");
   // for each array element
@@ -130,31 +148,10 @@ void drawCaptions() {
   }
 }
 
-void sendFrameToRunway(){
-  // if there's no label image, don't send anything
-  if(labelImage == null){
-    return;
-  }
-  // nothing to send if there's no new camera data available
-  if(camera.available() == false){
-    return;
-  }
-  // read a new frame
-  camera.read();
-  // crop image to Runway input format (600x400)
-  PImage inputImage = camera.get(0,0,600,400);
-  // prepare input JSON object
-  JSONObject input = new JSONObject();
-  input.setString("input_image",ModelUtils.toBase64(inputImage));
-  input.setString("label_image",ModelUtils.toBase64(labelImage));
-  // request 75% match
-  input.setFloat("match_tolerance",0.75);
-  // query Runway with webcam image and input image
-  runway.query(input.format(-1));
-}
+
 
 // this is called when new Runway data is available
 void runwayDataEvent(JSONObject runwayData){
-  // point the sketch data to the Runway incoming data 
+  // point the sketch data to the Runway incoming data
   data = runwayData;
 }

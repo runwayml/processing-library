@@ -20,9 +20,8 @@
 // RUNWAYML
 // www.runwayml.com
 
-// PoseNet Demo:
-// Receive OSC messages from Runway
-// Running PoseNet model
+// OpenPifPaf Demo:
+// Running OpenPifPaf model
 // example by George Profenza
 
 // import video library

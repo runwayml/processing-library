@@ -1,6 +1,6 @@
-// Copyright (C) 2019 RunwayML Examples
+// Copyright (C) 2019 Runway AI Examples
 // 
-// This file is part of RunwayML Examples.
+// This file is part of Runway AI Examples.
 // 
 // Runway-Examples is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,70 +17,94 @@
 // 
 // ===========================================================================
 
-// RUNWAYML
-// www.runwayml.com
+// RUNWAY
+// www.runwayapp.ai
 
-// DeepLab
+// 3DDFA Demo:
 // Receive HTTP messages from Runway
-// Running DeepLab model
-// example by George Profenza
+// Running 3DDFA model
+// example by by George Profenza
 
 // import Runway library
 import com.runwayml.*;
 // reference to runway instance
 RunwayHTTP runway;
 
-PImage runwayResult; 
-PImage contentImage;
+// store image results from Runway
+PImage runwayResult;
 
-// status
-String status = "Press 'c' to select a content image";
+// Input Image
+PImage inputImage;
 
 void setup(){
   // match sketch size to default model camera setup
   size(1200,400);
+  // change default black stroke
+  stroke(9,130,250);
+  strokeWeight(3);
   // setup Runway
   runway = new RunwayHTTP(this);
-  // update manually
+  // disable automatic polling: request data manually when a new frame is ready
   runway.setAutoUpdate(false);
 }
 
 void draw(){
   background(0);
-  // draw content image (if loaded)
-  if(contentImage != null){
-    image(contentImage,0,0);
+  // Display image (if loaded)
+  if(inputImage != null){
+    image(inputImage,0,0);
   }
-  // draw image received from Runway
+  
+  // display Runway result if available
   if(runwayResult != null){
-    image(runwayResult,600,0);
+    image(runwayResult,600,0,600,400);
   }
-  // display status
-  text(status,5,15);
+  // display instructions
+  text("press 's' to select an input image\npress SPACE to query Runway"+
+       "press '1' to request Pose\n"+
+       "press '2' to request Depth\n"+
+       "press '3' to request Points\n"+
+       "press '4' to request Skin",5,15);
 }
 
 void keyPressed(){
-  if(key == 'c'){
-    selectInput("Select a content image to process:", "contentImageSelected");
+  if(key == '1'){
+    queryRunway("pose");
+  }
+  if(key == '2'){
+    queryRunway("depth");
+  }
+  if(key == '3'){
+    queryRunway("points");
+  }
+  if(key == '4'){
+    queryRunway("skin");
   }
   if(key == 's'){
-    if(runwayResult != null){
-      runwayResult.save(dataPath("result.png"));
-    }
+    selectInput("Select an input image to process:", "inputImageSelected");
   }
 }
 
-void contentImageSelected(File selection) {
+void inputImageSelected(File selection) {
   if (selection == null) {
     println("Window was closed or the user hit cancel.");
   } else {
     println("selected " + selection.getAbsolutePath());
-    contentImage = loadImage(selection.getAbsolutePath());
-    // resize image (adjust as needed)
-    contentImage.resize(600,400);
-    // send to Runway
-    runway.query(contentImage);
+    inputImage = loadImage(selection.getAbsolutePath());
   }
+}
+
+void queryRunway(String outputType){
+  // nothing to do if no input image is loaded
+  if(inputImage == null){
+    return;
+  }
+  // query Runway with webcam image 
+  JSONObject input = new JSONObject();
+  input.setString("content_image",ModelUtils.toBase64(inputImage,ModelUtils.IMAGE_FORMAT_JPG));
+  input.setString("output_type",outputType);
+  // send input to Runway
+  runway.query(input.format(-1));
 }
 
 // this is called when new Runway data is available
@@ -89,11 +113,13 @@ void runwayDataEvent(JSONObject runwayData){
   String base64ImageString = runwayData.getString("image");
   // try to decode the image from
   try{
-    runwayResult = ModelUtils.fromBase64(base64ImageString);
+    PImage result = ModelUtils.fromBase64(base64ImageString);
+    if(result != null){
+      runwayResult = result;
+    }
   }catch(Exception e){
     e.printStackTrace();
   }
-  status = "received runway result";
 }
 
 // this is called each time Processing connects to Runway

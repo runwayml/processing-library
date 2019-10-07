@@ -25,12 +25,14 @@
 // Running SPADE-Landscapes model
 // example by by George Profenza
 
-// drawing layer
-PGraphics drawing;
 int currentLabelIndex = 0;
 int currentLabelColor;
 
 String status = "";
+
+// Input Image
+PImage inputImage;
+
 
 void setup(){
   size(1280,360);
@@ -38,51 +40,43 @@ void setup(){
   
   setupRunway();
   
-  //setup drawing layer
-  drawing = createGraphics(640,360);
-  drawing.beginDraw();
-  drawing.background(0);
-  drawing.noStroke();
-  drawing.endDraw();
 }
 
 void draw(){
   // clear background
   background(0);
-  // preview drawing
-  image(drawing,0,0);
+  // Display image (if loaded)
+  if(inputImage != null){
+    image(inputImage,0,0);
+  }
   // display runway result (if any)
   if(runwayResult != null){
     image(runwayResult,640,0);
   }
   // display usage
   if(labels != null){
-  text("LEFT/RIGHT = cycle through labels\n" +
-      "currentLabel: " + labels[currentLabelIndex] + "\n" +  
-       "click to draw\npress SPACE to send image to Runway\n" + status,5,15);
+    text("press 's' to select an input image\npress SPACE to send image to Runway",5,15);
   }
   // separator
   line(640,0,640,360);
 }
 
-void mouseDragged(){
-  drawing.beginDraw();
-  drawing.fill(currentLabelColor);
-  drawing.ellipse(constrain(mouseX,0,640),constrain(mouseY,0,360),36,36);
-  drawing.endDraw();
-}
 
 void keyPressed(){
-  if(keyCode == LEFT && currentLabelIndex > 0){
-    currentLabelIndex--;
-    updateLabelColor();
-  }
-  if(keyCode == RIGHT && currentLabelIndex < labels.length - 1){
-    currentLabelIndex++;
-    updateLabelColor();
+  if(key == 's'){
+    selectInput("Select an input image to process:", "inputImageSelected");
   }
   if(key == ' '){
     status = "waiting for results";
-    sendImageToRunway();
+    sendImageToRunway(inputImage);
+  }
+}
+
+void inputImageSelected(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    println("selected " + selection.getAbsolutePath());
+    inputImage = loadImage(selection.getAbsolutePath());
   }
 }

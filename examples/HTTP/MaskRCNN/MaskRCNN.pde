@@ -33,9 +33,7 @@ import com.runwayml.*;
 // reference to runway instance
 RunwayHTTP runway;
 
-PImage runwayResult;
-
-color BLUE = color(9,130,250); 
+PImage runwayResult; 
 
 // periocally to be updated using millis()
 int lastMillis;

@@ -20,9 +20,9 @@
 // RUNWAYML
 // www.runwayml.com
 
-// COCO-SSD Demo:
+// Face-Recognition Demo:
 // Receive HTTP messages from Runway
-// Running COCO-SSD model
+// Running Face-Recognition model
 
 // import video library
 import processing.video.*;

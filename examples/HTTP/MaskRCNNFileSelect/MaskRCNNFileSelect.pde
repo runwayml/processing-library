@@ -20,10 +20,13 @@
 // RUNWAYML
 // www.runwayml.com
 
-// DeepLab
-// Receive HTTP messages from Runway
-// Running DeepLab model
+// MaskRCNN
+// Receive OSC messages from Runway
+// Running MaskRCNN model
 // example by George Profenza
+
+// import video library
+import processing.video.*;
 
 // import Runway library
 import com.runwayml.*;
@@ -31,10 +34,14 @@ import com.runwayml.*;
 RunwayHTTP runway;
 
 PImage runwayResult; 
-PImage contentImage;
 
 // status
-String status = "Press 'c' to select a content image";
+String status = "";
+
+String category = "person";
+
+// Input Image
+PImage inputImage;
 
 void setup(){
   // match sketch size to default model camera setup
@@ -47,46 +54,59 @@ void setup(){
 
 void draw(){
   background(0);
-  // draw content image (if loaded)
-  if(contentImage != null){
-    image(contentImage,0,0);
+  // Display image (if loaded)
+  if(inputImage != null){
+    image(inputImage,0,0);
   }
+  
+  // Display instructions
+  text("press 's' to select an input image\npress SPACE to query Runway\n"+status,5,15);
   // draw image received from Runway
   if(runwayResult != null){
     image(runwayResult,600,0);
   }
-  // display status
-  text(status,5,15);
 }
 
 void keyPressed(){
-  if(key == 'c'){
-    selectInput("Select a content image to process:", "contentImageSelected");
-  }
   if(key == 's'){
-    if(runwayResult != null){
-      runwayResult.save(dataPath("result.png"));
+    selectInput("Select an input image to process:", "inputImageSelected");
+  }
+  if(key == ' '){
+    if(inputImage != null){
+      runway.query(inputImage);
     }
   }
 }
 
-void contentImageSelected(File selection) {
+void inputImageSelected(File selection) {
   if (selection == null) {
     println("Window was closed or the user hit cancel.");
   } else {
     println("selected " + selection.getAbsolutePath());
-    contentImage = loadImage(selection.getAbsolutePath());
-    // resize image (adjust as needed)
-    contentImage.resize(600,400);
-    // send to Runway
-    runway.query(contentImage);
+    inputImage = loadImage(selection.getAbsolutePath());
   }
 }
+
+void queryRunway(){
+  // nothing to do if there's no input image
+  if(inputImage == null){
+    return;
+  }
+  // create input JSON object to hold image and category data
+  JSONObject input = new JSONObject();
+  // set image
+  input.setString("image",ModelUtils.toBase64(inputImage));
+  // set category
+  input.setString("category",category);
+  // query Runway
+  runway.query(input.format(-1));
+}
+
 
 // this is called when new Runway data is available
 void runwayDataEvent(JSONObject runwayData){
   // point the sketch data to the Runway incoming data 
-  String base64ImageString = runwayData.getString("image");
+  String base64ImageString = runwayData.getString("output");
   // try to decode the image from
   try{
     runwayResult = ModelUtils.fromBase64(base64ImageString);

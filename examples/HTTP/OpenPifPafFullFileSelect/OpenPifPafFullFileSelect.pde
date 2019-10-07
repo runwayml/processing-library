@@ -20,9 +20,8 @@
 // RUNWAYML
 // www.runwayml.com
 
-// DeepLab
-// Receive HTTP messages from Runway
-// Running DeepLab model
+// OpenPifPaf Demo:
+// Running OpenPifPaf model
 // example by George Profenza
 
 // import Runway library
@@ -30,15 +29,22 @@ import com.runwayml.*;
 // reference to runway instance
 RunwayHTTP runway;
 
-PImage runwayResult; 
-PImage contentImage;
+// This array will hold all the humans detected
+JSONArray humans;
+
+PImage runwayResult;
+
+color BLUE = color(9,130,250); 
 
 // status
-String status = "Press 'c' to select a content image";
+String status = "";
+
+// Input Image
+PImage inputImage;
 
 void setup(){
   // match sketch size to default model camera setup
-  size(1200,400);
+  size(1640,666);
   // setup Runway
   runway = new RunwayHTTP(this);
   // update manually
@@ -47,39 +53,66 @@ void setup(){
 
 void draw(){
   background(0);
-  // draw content image (if loaded)
-  if(contentImage != null){
-    image(contentImage,0,0);
+  // Display image (if loaded)
+  if(inputImage != null){
+    image(inputImage,0,0);
   }
   // draw image received from Runway
   if(runwayResult != null){
-    image(runwayResult,600,0);
+    image(runwayResult,640,0);
   }
+  // manually draw PoseNet parts
+  drawOpenPifPafParts(humans);
   // display status
-  text(status,5,15);
+  text("press 's' to select an image\npress SPACE to send image to Runway\n"+status,5,15);
 }
 
 void keyPressed(){
-  if(key == 'c'){
-    selectInput("Select a content image to process:", "contentImageSelected");
-  }
   if(key == 's'){
-    if(runwayResult != null){
-      runwayResult.save(dataPath("result.png"));
+    selectInput("Select an input image to process:", "inputImageSelected");
+  }
+  if(key == ' '){
+    if(inputImage != null){
+      runway.query(inputImage);
     }
   }
 }
 
-void contentImageSelected(File selection) {
+void inputImageSelected(File selection) {
   if (selection == null) {
     println("Window was closed or the user hit cancel.");
   } else {
     println("selected " + selection.getAbsolutePath());
-    contentImage = loadImage(selection.getAbsolutePath());
-    // resize image (adjust as needed)
-    contentImage.resize(600,400);
-    // send to Runway
-    runway.query(contentImage);
+    inputImage = loadImage(selection.getAbsolutePath());
+  }
+}
+
+void drawOpenPifPafParts(JSONArray humans){
+  // Only if there are any humans detected
+  if (humans != null) {
+    for(int h = 0; h < humans.size(); h++) {
+      JSONObject human = humans.getJSONObject(h);
+      JSONArray keypoints = human.getJSONArray("keypoints");
+      JSONArray boundingBox = human.getJSONArray("bbox");
+      // Now that we have one human, let's draw its body parts
+      noStroke();
+      fill(BLUE);
+      // iterate through keypoints: a 1D array of alternating x1,y1,score1,x2,y2,score2,etc. 
+      for(int k = 0 ; k < keypoints.size() - 1; k += 3){
+        float x = keypoints.getFloat(k);
+        float y = keypoints.getFloat(k + 1);
+        //float score = keypoints.getFloat(k + 2);
+        // if keypoints have been found, render
+        if(x != 0.0 && y != 0.0){
+          ellipse(x,y,9,9);
+        }
+      }
+      // render bounding box
+      stroke(BLUE);
+      strokeWeight(3);
+      noFill();
+      rect(boundingBox.getFloat(0),boundingBox.getFloat(1),boundingBox.getFloat(2),boundingBox.getFloat(3));
+    }
   }
 }
 
@@ -90,6 +123,12 @@ void runwayDataEvent(JSONObject runwayData){
   // try to decode the image from
   try{
     runwayResult = ModelUtils.fromBase64(base64ImageString);
+  }catch(Exception e){
+    e.printStackTrace();
+  }
+  // get keypoints
+  try{
+    humans = JSONArray.parse(runwayData.getString("keypoints"));
   }catch(Exception e){
     e.printStackTrace();
   }

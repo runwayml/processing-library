@@ -20,9 +20,9 @@
 // RUNWAYML
 // www.runwayml.com
 
-// DeepLab
+// YOLACT
 // Receive HTTP messages from Runway
-// Running DeepLab model
+// Running YOLACT model
 // example by George Profenza
 
 // import Runway library
@@ -30,11 +30,14 @@ import com.runwayml.*;
 // reference to runway instance
 RunwayHTTP runway;
 
+
 PImage runwayResult; 
-PImage contentImage;
 
 // status
-String status = "Press 'c' to select a content image";
+String status = "";
+
+// Input Image
+PImage inputImage;
 
 void setup(){
   // match sketch size to default model camera setup
@@ -47,46 +50,44 @@ void setup(){
 
 void draw(){
   background(0);
-  // draw content image (if loaded)
-  if(contentImage != null){
-    image(contentImage,0,0);
+  // Display image (if loaded)
+  if(inputImage != null){
+    image(inputImage,0,0);
   }
   // draw image received from Runway
   if(runwayResult != null){
     image(runwayResult,600,0);
   }
   // display status
-  text(status,5,15);
+  text("press 's' to select an input image\npress SPACE to send image to Runway\n"+status,5,15);
 }
 
 void keyPressed(){
-  if(key == 'c'){
-    selectInput("Select a content image to process:", "contentImageSelected");
-  }
   if(key == 's'){
-    if(runwayResult != null){
-      runwayResult.save(dataPath("result.png"));
-    }
+    selectInput("Select an input image to process:", "inputImageSelected");
+  }
+  if(key == ' ' && inputImage != null){
+    status= "waiting for results";
+    // send image to runway
+    runway.query(inputImage,ModelUtils.IMAGE_FORMAT_JPG,"input_image");
   }
 }
 
-void contentImageSelected(File selection) {
+void inputImageSelected(File selection) {
   if (selection == null) {
     println("Window was closed or the user hit cancel.");
   } else {
     println("selected " + selection.getAbsolutePath());
-    contentImage = loadImage(selection.getAbsolutePath());
-    // resize image (adjust as needed)
-    contentImage.resize(600,400);
-    // send to Runway
-    runway.query(contentImage);
+    inputImage = loadImage(selection.getAbsolutePath());
+    // resize or crop as needed
+    inputImage.resize(600,400);
   }
 }
 
 // this is called when new Runway data is available
 void runwayDataEvent(JSONObject runwayData){
   // point the sketch data to the Runway incoming data 
-  String base64ImageString = runwayData.getString("image");
+  String base64ImageString = runwayData.getString("output_image");
   // try to decode the image from
   try{
     runwayResult = ModelUtils.fromBase64(base64ImageString);

@@ -33,12 +33,7 @@ import com.runwayml.*;
 // reference to runway instance
 RunwayHTTP runway;
 
-// This array will hold all the humans detected
-JSONArray humans;
-
 PImage runwayResult;
-
-color BLUE = color(9,130,250); 
 
 // periocally to be updated using millis()
 int lastMillis;
