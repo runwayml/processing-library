@@ -1,12 +1,51 @@
-<p align="center">
-  <img src="./assets/cover_runway_processing_github.jpg">
-</p>
+# RunwayML library for Processing
 
-# Runway Processing library source
+A library to easily use [RunwayML](https://runwayml.com) with [Processing](https://processing.org/).
 
-A library to easily use [Runway](https://runwayml.com) with [Processing](https://processing.org/).
+## How install 
 
-## Examples
+### Option 1: via Contribution Manager
+
+In Processing:
+
+1. go to **Sketch > Import Library... > Add Library... > Contribution Manager Filter > Runway**
+2. select RunwayML
+3. press install
+
+### Option 2: manually
+
+1. Download **RunwayML.zip** from the [releases page](https://github.com/runwayml/processing-library/releases)
+2. Unzip into **Documents > Processing > libraries**
+3. Restart Processing (if it was already running)
+
+## Basic Examples
+
+This example will print `/data` from Runway (e.g. running im2txt)
+
+```processing
+// import Runway library
+import com.runwayml.*;
+// reference to runway instance
+RunwayHTTP runway;
+
+void setup() {
+  // setup Runway
+  runway = new RunwayHTTP(this);
+}
+
+void draw() {
+  
+}
+
+// this is called when new Runway data is available
+void runwayDataEvent(JSONObject runwayData){
+  println(runwayData);
+}
+```
+
+## Existing Examples
+
+You can access the following examples via **Processing > Examples > Contributed Libraries > RunwayML**
 
 - AdaIN-Style-Transfer ![preview](assets/examples/ada-in-style-transfer.jpg)
   
@@ -18,7 +57,7 @@ A library to easily use [Runway](https://runwayml.com) with [Processing](https:/
   
 - BigGAN: ![preview](assets/examples/big-gan.jpg)
 
-- cnOCR
+- cnOCR: ![preview](assets/examples/cn-ocr.jpg)
 
 - COCO-SSD: ![preview](assets/examples/coco-ssd.jpg)
 
@@ -34,37 +73,37 @@ A library to easily use [Runway](https://runwayml.com) with [Processing](https:/
 
 - Face-Landmarks: ![preview](assets/examples/face-landmarks.jpg)
 
-- Face-Recognition
+- Face-Recognition: ![preview](assets/examples/face-recognition)
 
 - Fast-Style-Transfer: ![preview](assets/examples/fast-style-transfer.jpg)
 
-- GPT-2
+- GPT-2: ![preview](assets/examples/gpt-2.jpg)
 
-- im2txt
+- im2txt: ![preview](assets/examples/im2txt.jpg)
 
-- Image-Inpainting-GMCNN
+- Image-Inpainting-GMCNN: ![preview](assets/examples/inpainting-gmcnn.jpg)
 
 - Image-Super-Resolution: ![preview](assets/examples/image-super-resolution.jpg)
 
-- MaskRCNN
+- MaskRCNN: ![preview](assets/examples/mask-rcnn.jpg)
 
-- Model3DDFA
+- Model3DDFA: ![preview](assets/examples/3ddfa.jpg)
 
-- OpenPifPaf-Pose
+- OpenPifPaf-Pose: ![preview](assets/examples/open-pif-paf.jpg)
 
 - Photo-Sketch: ![preview](assets/examples/photo-sketch.jpg)
 
 - PoseNet: ![preview](assets/examples/posenet.jpg)
 
-- SPADE-COCO
+- SPADE-COCO: ![preview](assets/examples/spade-coco.jpg)
 
-- SPADE-Landmarks
+- SPADE-Landmarks: ![preview](assets/examples/spade-landmarks.jpg)
 
 - StyleGAN: ![preview](assets/examples/style-gan.jpg)
 
-- VisualImportance
+- VisualImportance: ![preview](assets/examples/visual-importance.jpg)
 
-- YOLACT
+- YOLACT: ![preview](assets/examples/yolact.jpg)
   
 
 ## Dependencies
