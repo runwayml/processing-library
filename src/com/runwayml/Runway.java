@@ -158,7 +158,7 @@ public class Runway {
 	}
 	
 	// "kindly borrowed" from https://github.com/processing/processing/blob/master/java/libraries/serial/src/processing/serial/Serial.java
-	private Method findCallback(final String name,Class argumentType) {
+	private Method findCallback(final String name,Class<?> argumentType) {
 		try {
 	      return parent.getClass().getMethod(name, argumentType);
 	    } catch (Exception e) {
