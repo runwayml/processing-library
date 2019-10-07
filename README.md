@@ -97,7 +97,7 @@ You can access the following examples via **Processing > Examples > Contributed 
 
 - SPADE-COCO: ![preview](assets/examples/spade-coco.jpg)
 
-- SPADE-Landmarks: ![preview](assets/examples/spade-landmarks.jpg)
+- SPADE-Landscapes: ![preview](assets/examples/spade-landscapes.jpg)
 
 - StyleGAN: ![preview](assets/examples/style-gan.jpg)
 
