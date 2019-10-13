@@ -100,7 +100,7 @@ void sendFrameToRunway(){
   // set category
   input.setString("category",category);
   // query Runway
-  runway.query(input.format(-1));
+  runway.query(input.toString());
 }
 
 

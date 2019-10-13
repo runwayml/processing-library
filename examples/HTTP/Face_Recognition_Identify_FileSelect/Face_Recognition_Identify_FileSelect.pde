@@ -117,7 +117,7 @@ void queryRunway(){
   // request 75% match
   input.setFloat("match_tolerance",0.95);
   // query Runway with webcam image and input image
-  runway.query(input.format(-1));
+  runway.query(input.toString());
 }
 
 // A function to display the captions

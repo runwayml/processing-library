@@ -74,7 +74,7 @@ void runwayDataEvent(JSONObject runwayData){
    outputImage = ModelUtils.fromBase64(runwayData.getString("image"));
    status = "processing complete";
  }catch(Exception e){
-   println("error parsing runway Data:\n" + runwayData.format(-1));
+   println("error parsing runway Data:\n" + runwayData.toString());
    e.printStackTrace();
  }
 }

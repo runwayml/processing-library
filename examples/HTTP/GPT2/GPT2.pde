@@ -99,7 +99,7 @@ void input(String theText) {
   json_output = json_message.toString();
 
   //send the message to RunwayML
-  runway.query(json_message.format(-1));
+  runway.query(json_output);
 }
 
 // this is called when new Runway data is available
