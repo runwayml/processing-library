@@ -4,16 +4,6 @@ A library to easily use [RunwayML](https://runwayml.com) with [Processing](https
 
 ## How install 
 
-### Option 1: via Contribution Manager
-
-In Processing:
-
-1. go to **Sketch > Import Library... > Add Library... > Contribution Manager Filter > Runway**
-2. select RunwayML
-3. press install
-
-### Option 2: manually
-
 1. Download **[RunwayML.zip](https://github.com/runwayml/processing-library/releases/download/latest/RunwayML.zip)**
 2. Unzip into **Documents > Processing > libraries**
 3. Restart Processing (if it was already running)
