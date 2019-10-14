@@ -30,9 +30,6 @@ import com.runwayml.*;
 // reference to runway instance
 RunwayHTTP runway;
 
-// The data coming in from Runway as a JSON Object {}
-JSONObject data;
-
 // Storage for received Runway image data
 PImage runwayResult;
 

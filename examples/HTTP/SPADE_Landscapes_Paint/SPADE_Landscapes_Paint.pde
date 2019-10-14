@@ -23,7 +23,7 @@
 // SPADE Landscapes Demo:
 // Receive HTTP messages from Runway
 // Running SPADE-Landscapes model
-// example by by George Profenza
+// example by George Profenza
 
 // drawing layer
 PGraphics drawing;

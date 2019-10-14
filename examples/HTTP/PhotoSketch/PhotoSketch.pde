@@ -35,8 +35,6 @@ RunwayHTTP runway;
 
 PImage runwayResult;
 
-color BLUE = color(9,130,250); 
-
 // periocally to be updated using millis()
 int lastMillis;
 // how often should the above be updated and a time action take place ?

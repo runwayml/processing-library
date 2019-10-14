@@ -69,7 +69,7 @@ public void runwayInfoEvent(JSONObject info){
     // update color to the first label
     updateLabelColor();
   }catch(Exception e){
-    println("error parsing SPADE-COCO model info, unexpected JSON data received:\n" + info.format(-1));
+    println("error parsing SPADE-COCO model info, unexpected JSON data received:\n" + info.toString());
     e.printStackTrace();
   }
 }

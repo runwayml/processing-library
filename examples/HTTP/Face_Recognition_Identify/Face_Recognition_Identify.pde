@@ -150,7 +150,7 @@ void sendFrameToRunway(){
   // request 75% match
   input.setFloat("match_tolerance",0.75);
   // query Runway with webcam image and input image
-  runway.query(input.format(-1));
+  runway.query(input.toString());
 }
 
 // this is called when new Runway data is available

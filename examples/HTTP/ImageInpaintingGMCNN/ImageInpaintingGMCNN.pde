@@ -109,7 +109,7 @@ void sendFrameToRunway(){
   // set mask
   input.setString("mask",ModelUtils.toBase64(mask));
   // query Runway
-  runway.query(input.format(-1));
+  runway.query(input.toString());
 }
 
 PImage fillRect(PImage input,int x,int y,int w,int h,color fill){

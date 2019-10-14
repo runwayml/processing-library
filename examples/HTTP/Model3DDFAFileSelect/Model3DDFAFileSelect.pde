@@ -104,7 +104,7 @@ void queryRunway(String outputType){
   input.setString("content_image",ModelUtils.toBase64(inputImage,ModelUtils.IMAGE_FORMAT_JPG));
   input.setString("output_type",outputType);
   // send input to Runway
-  runway.query(input.format(-1));
+  runway.query(input.toString());
 }
 
 // this is called when new Runway data is available

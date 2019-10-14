@@ -23,7 +23,7 @@
 // SPADE COCO Demo:
 // Receive HTTP messages from Runway
 // Running SPADE COCO model
-// example by by George Profenza
+// example by George Profenza
 
 // drawing layer
 int currentLabelIndex = 0;
