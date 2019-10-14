@@ -63,6 +63,11 @@ void keyPressed(){
   if(key == 'c'){
     selectInput("Select a content image to process:", "contentImageSelected");
   }
+  if(key == 's'){
+    if(runwayResult != null){
+      runwayResult.save(dataPath("result.png"));
+    }
+  }
 }
 
 void contentImageSelected(File selection) {

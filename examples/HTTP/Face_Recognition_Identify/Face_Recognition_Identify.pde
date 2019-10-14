@@ -20,9 +20,9 @@
 // RUNWAYML
 // www.runwayml.com
 
-// COCO-SSD Demo:
+// Face Recognition Identify Demo:
 // Receive HTTP messages from Runway
-// Running COCO-SSD model
+// Running Face-Recognition model
 
 // import video library
 import processing.video.*;
@@ -131,7 +131,7 @@ void drawCaptions() {
 }
 
 void sendFrameToRunway(){
-  // if there's no input image, don't send anything
+  // if there's no label image, don't send anything
   if(labelImage == null){
     return;
   }
@@ -150,7 +150,7 @@ void sendFrameToRunway(){
   // request 75% match
   input.setFloat("match_tolerance",0.75);
   // query Runway with webcam image and input image
-  runway.query(input.format(-1));
+  runway.query(input.toString());
 }
 
 // this is called when new Runway data is available

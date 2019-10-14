@@ -1,6 +1,6 @@
-// Copyright (C) 2019 RunwayML Examples
+// Copyright (C) 2018 Runway AI Examples
 // 
-// This file is part of RunwayML Examples.
+// This file is part of Runway AI Examples.
 // 
 // Runway-Examples is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 // 
 // ===========================================================================
 
-// RUNWAYML
-// www.runwayml.com
+// RUNWAY
+// www.runwayapp.ai
 
 // AdaIN-Style-Transfer
 // Receive HTTP messages from Runway

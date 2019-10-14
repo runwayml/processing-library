@@ -20,10 +20,10 @@
 // RUNWAYML
 // www.runwayml.com
 
-// SPADE COCO Demo:
+// SPADE Landscapes Demo:
 // Receive HTTP messages from Runway
-// Running SPADE COCO model
-// example by by George Profenza
+// Running SPADE-Landscapes model
+// example by George Profenza
 
 // drawing layer
 PGraphics drawing;
