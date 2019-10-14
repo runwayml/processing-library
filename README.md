@@ -2,13 +2,19 @@
 
 A library to easily use [RunwayML](https://runwayml.com) with [Processing](https://processing.org/).
 
-## How install 
+## Prerequisites
+
+* [RunwayML](https://runwayml.com/): Download the latest release of [RunwayML](https://runwayml.com/download) and sign up for an account. Visit our [installation guide](https://learn.runwayml.com/#/getting-started/installation) for more details. If you encounter any issues installing RunwayML, feel free to contact us through the [support page](https://support.runwayml.com).
+
+* [Processing](https://processing.org/): Processing version 3.0 or greater is required.
+
+## Installation
 
 1. Download **[RunwayML.zip](https://github.com/runwayml/processing-library/releases/download/latest/RunwayML.zip)**
 2. Unzip into **Documents > Processing > libraries**
 3. Restart Processing (if it was already running)
 
-## Basic Examples
+## Basic Example
 
 This example will print `/data` from Runway (e.g. running im2txt)
 
