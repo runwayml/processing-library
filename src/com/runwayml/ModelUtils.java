@@ -8,6 +8,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
 
+import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.data.JSONArray;
@@ -98,7 +99,7 @@ public class ModelUtils {
 	/**
 	 * converts a PImage to a Base64 encoded String
 	 * @param image - PImage to convert
-	 * @return Base64 encoded string representation of the image
+	 * @return Base64 encoded string representation of the image (using JPG mime type by default, see <pre>toBase64(PImage image,String format)</pre>)
 	 */
 	public static String toBase64(PImage image){
 		String result = null;
@@ -132,6 +133,7 @@ public class ModelUtils {
 		
 		if(format.equals(ModelUtils.IMAGE_FORMAT_JPG)){
 			mimeType = "image/jpeg";
+			image.filter(PImage.OPAQUE);
 		}
 		
 		if(format.equals(ModelUtils.IMAGE_FORMAT_PNG)){
