@@ -8,7 +8,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
 
-import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.data.JSONArray;
