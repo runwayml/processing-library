@@ -84,6 +84,7 @@ public class RunwayHTTP extends Runway {
 			JSONObject info = parent.loadJSONObject(serverAddress + INFO);
 			dispatchInfo(info);
 		} catch (Exception e) {
+			printAccessError(serverAddress + INFO);
 			System.err.println("error parsing JSON from /info HTTP route");
 			e.printStackTrace();
 		}
@@ -123,6 +124,7 @@ public class RunwayHTTP extends Runway {
 				return;
 			}
 		} catch (Exception e) {
+			printAccessError(serverAddress + ERROR);
 			System.err.println("error accessing string from /error HTTP route");
 			e.printStackTrace();
 			this.onInfoEventMethod = null;
@@ -133,12 +135,18 @@ public class RunwayHTTP extends Runway {
 			JSONObject data = parent.loadJSONObject(serverAddress + DATA);
 			dispatchData(data);
 		}catch (Exception e) {
+			printAccessError(serverAddress + DATA);
 			System.err.println("error parsing JSON from /data HTTP route");
 			e.printStackTrace();
 			this.onDataEventMethod = null;
 		}
 	}
-
+	
+	private void printAccessError(String route){
+		System.out.println("Please ensure a Runway model is running first");
+		System.out.println("To test, check if a JSON object is visible when you point your browser to: " + route);
+	}
+	
 	/**
 	 * @return the autoUpdate
 	 */
