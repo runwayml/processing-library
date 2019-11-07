@@ -14,6 +14,8 @@ A library to easily use [RunwayML](https://runwayml.com) with [Processing](https
 2. Unzip into **Documents > Processing > libraries**
 3. Restart Processing (if it was already running)
 
+[📽 Watch How to Install and Use the RunwayML Processing Library](https://www.youtube.com/watch?v=zGdOKaLOjck&list=PLj598ZXODDO_oWYAiO5c0Ac05IyrPUG8t&index=6&t=0s)
+
 ## Basic Example
 
 This example will print `/data` from Runway (e.g. running im2txt)
