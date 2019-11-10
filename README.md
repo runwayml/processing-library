@@ -33,7 +33,6 @@ For this example run the im2txt model.
 
 This example will print information from RunwayML (e.g. running im2txt)
 
-
 ```processing
 // import Runway library
 import com.runwayml.*;
@@ -53,6 +52,7 @@ void draw() {
 void runwayDataEvent(JSONObject runwayData){
   println(runwayData);
 }
+
 // this is called each time Processing connects to Runway
 // Runway sends information about the current model
 public void runwayInfoEvent(JSONObject info){
@@ -83,10 +83,12 @@ import com.runwayml.*;
 RunwayHTTP runway;
 // reference to image received
 PImage resultImage;
+
 void setup() {
   // setup Runway HTTP connection using default host (localhost) and port (8000)
   runway = new RunwayHTTP(this);
 }
+
 void draw() {
 	// if there's an image received:
 	if(resultImage != null){
@@ -94,6 +96,7 @@ void draw() {
 		image(resultImage,0,0);
 	}  
 }
+
 // this is called when new Runway data is available
 void runwayDataEvent(JSONObject runwayData){
   // try to access "image" key and convert the received that to a PImage
@@ -106,6 +109,7 @@ void runwayDataEvent(JSONObject runwayData){
   	e.printStackTrace();
   }
 }
+
 // this is called each time Processing connects to Runway
 // Runway sends information about the current model
 public void runwayInfoEvent(JSONObject info){
