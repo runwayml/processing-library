@@ -16,9 +16,23 @@ A library to easily use [RunwayML](https://runwayml.com) with [Processing](https
 
 [📽 Watch How to Install and Use the RunwayML Processing Library](https://www.youtube.com/watch?v=zGdOKaLOjck&list=PLj598ZXODDO_oWYAiO5c0Ac05IyrPUG8t&index=6&t=0s)
 
+## Testing installation
+
+Before using the library please make sure RunwayML is started and is running one model.
+
+You can test by opening your browser and navigating to [http://localhost:8000/info](http://localhost:8000/info)
+to view info about your model.
+
+If you see a JSON string with inputs and outputs information use the Basic Example bellow !
+
+Feel free test the Basic Example bellow.
+
 ## Basic Example
 
-This example will print `/data` from Runway (e.g. running im2txt)
+For this example run the im2txt model.
+
+This example will print information from RunwayML (e.g. running im2txt)
+
 
 ```processing
 // import Runway library
@@ -27,7 +41,7 @@ import com.runwayml.*;
 RunwayHTTP runway;
 
 void setup() {
-  // setup Runway
+  // setup Runway HTTP connection using default host (localhost) and port (8000)
   runway = new RunwayHTTP(this);
 }
 
@@ -38,6 +52,68 @@ void draw() {
 // this is called when new Runway data is available
 void runwayDataEvent(JSONObject runwayData){
   println(runwayData);
+}
+// this is called each time Processing connects to Runway
+// Runway sends information about the current model
+public void runwayInfoEvent(JSONObject info){
+  println(info);
+}
+// if anything goes wrong
+public void runwayErrorEvent(String message){
+  println(message);
+}
+```
+
+Notice the text running displayed in console. 
+
+What if we want to display an image from RunwayML ?
+
+Let's stop im2txt and use CygleGAN.
+Notice on info event details about the model: the output in particular is an image with the key "image".
+(You can see the information within RunwayML on the top right Network area of the Model).
+
+Images to/from RunwayML are Base64 encoded and the library's `ModelUtils` helps convert between this format and the familiar `PImage` format.
+
+With the CycleGAN model running we can tweak the above example to display an image received from RunwayML:
+
+```processing
+// import Runway library
+import com.runwayml.*;
+// reference to runway instance
+RunwayHTTP runway;
+// reference to image received
+PImage resultImage;
+void setup() {
+  // setup Runway HTTP connection using default host (localhost) and port (8000)
+  runway = new RunwayHTTP(this);
+}
+void draw() {
+	// if there's an image received:
+	if(resultImage != null){
+		// display the image
+		image(resultImage,0,0);
+	}  
+}
+// this is called when new Runway data is available
+void runwayDataEvent(JSONObject runwayData){
+  // try to access "image" key and convert the received that to a PImage
+  try{
+  	String base64Image = runwayData.getString("image");
+  	resultImage = ModelUtils.fromBase64(base64Image);
+  }catch(Exception e){
+  	// print an error message if the above fails
+  	println("error parsing received data: " + runwayData);
+  	e.printStackTrace();
+  }
+}
+// this is called each time Processing connects to Runway
+// Runway sends information about the current model
+public void runwayInfoEvent(JSONObject info){
+  println(info);
+}
+// if anything goes wrong
+public void runwayErrorEvent(String message){
+  println(message);
 }
 ```
 
