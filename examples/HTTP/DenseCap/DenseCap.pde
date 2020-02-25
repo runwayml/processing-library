@@ -109,11 +109,6 @@ void drawCaptions() {
     fill(255);
     text(label + " score: " + String.format("%.2f", val), x, y);
 
-//console logs 
-    //println("className: "+className);
-    //println("score: "+score);
-    //println("bboxes: "+boxes);
-    //println(x, y, w, h);
   }
 }
 
