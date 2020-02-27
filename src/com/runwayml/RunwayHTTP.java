@@ -56,6 +56,7 @@ public class RunwayHTTP extends Runway {
 		}else{
 			System.out.println("invalid IPv4 address: " + host + " -> defaulting to " + host);
 		}
+		this.port = PORT;
 		this.setupPApplet(parent);
 		this.setup();
 	}
