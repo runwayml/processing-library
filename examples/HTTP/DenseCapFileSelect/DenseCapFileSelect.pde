@@ -91,25 +91,28 @@ void drawCaptions() {
     return;
   }
   
-  // access boxes and labels JSON arrays within the result
-  JSONArray results = data.getJSONArray("results");
   // for each array element
-  for(int i = 0 ; i < results.size(); i++){
-    JSONObject result = results.getJSONObject(i);
-    
-    String className = result.getString("class");
-    float score = result.getFloat("score");
-    JSONArray box = result.getJSONArray("bbox");
+  for (int i = 0; i < data.size(); i++) {
+
+    JSONArray className = data.getJSONArray("classes");
+    JSONArray score = data.getJSONArray("scores");
+    JSONArray boxes = data.getJSONArray("bboxes");
+
+    String label = className.getString(i);
+    float val=score.getFloat(i);
+    JSONArray box = boxes.getJSONArray(i);
     // extract values from the float array
-    float x = box.getFloat(0);
-    float y = box.getFloat(1);
-    float w = box.getFloat(2);
-    float h = box.getFloat(3);
+    float x = box.getFloat(0)* width;
+    float y = box.getFloat(1)* height;
+    float w = (box.getFloat(2) * width) - x;
+    float h = (box.getFloat(3) * height) - y;
+
     // display bounding boxes
     noFill();
-    rect(x,y,w,h);
+    rect(x, y, w, h);
     fill(255);
-    text(className + " score: " + String.format("%.2f",score),x,y);
+    text(label + " score: " + String.format("%.2f", val), x, y);
+
   }
 }
 
