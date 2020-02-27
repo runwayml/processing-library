@@ -41,7 +41,7 @@ void setup() {
   size(256, 256);
   frameRate(25);
   // setup Runway
-  runway = new RunwayHTTP(this);
+  runway = new RunwayHTTP(this,RUNWAYML_HTTP_IP,RUNWAYML_HTTP_PORT);
   // don't send messages to Runway continuously
   runway.setAutoUpdate(false);
 }
