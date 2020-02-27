@@ -1,4 +1,4 @@
-// Copyright (C) 2019 RunwayML Examples
+// Copyright (C) 2020 RunwayML Examples
 // 
 // This file is part of RunwayML Examples.
 // 
@@ -20,9 +20,9 @@
 // RUNWAYML
 // www.runwayml.com
 
-// PoseNet Demo:
+// face_landmarks Demo:
 // Receive OSC messages from Runway
-// Running PoseNet model
+// Running face_landmarks model
 // original example by Joel Matthys @jwmatthys, adapted by George Profenza
 
 // import Runway library
