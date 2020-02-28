@@ -1,12 +1,17 @@
 package com.runwayml;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
+
+import java.awt.image.BufferedImage;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import processing.core.PGraphics;
 import processing.core.PImage;
@@ -35,7 +40,6 @@ public class ModelUtils {
 	
 	public static String IMAGE_FORMAT_JPG = "JPG";
 	public static String IMAGE_FORMAT_PNG = "PNG";
-	
 	
 	/**
 	 * Traverses Pose Net poses and keypoints and draws ellipses for each keypoint position
@@ -103,16 +107,16 @@ public class ModelUtils {
 	public static String toBase64(PImage image){
 		String result = null;
 		
-	    BufferedImage jImage = (BufferedImage)image.getNative();
-	    ByteArrayOutputStream encodedBytesStream = new ByteArrayOutputStream();
-	    try {
+		BufferedImage jImage = (BufferedImage)image.getNative();
+		ByteArrayOutputStream encodedBytesStream = new ByteArrayOutputStream();
+		try {
 			ImageIO.write(jImage, "JPG", encodedBytesStream);
 			byte[] bytes = encodedBytesStream.toByteArray();
 			result = "data:image/jpeg;base64," + DatatypeConverter.printBase64Binary(bytes);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	    
+			
 	    return result;
 	}
 	
@@ -140,6 +144,7 @@ public class ModelUtils {
 		}
 		
 		String result = null;
+		
 		BufferedImage jImage = (BufferedImage)image.getNative();
 		ByteArrayOutputStream encodedBytesStream = new ByteArrayOutputStream();
 		
@@ -150,6 +155,7 @@ public class ModelUtils {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+			
 		
 		return result;
 	}
@@ -161,28 +167,31 @@ public class ModelUtils {
 	 * @return - the PImage decoded from the string
 	 */
 	public static PImage fromBase64(String runwayImageString){
+		
 		PImage result = null;
+		String base64Image = runwayImageString;
+		// search for comma: indicator of MIME type
+		int commaIndex = base64Image.indexOf(',');
+		// if found, remove the type before converting
+		if(commaIndex >= 0){
+			base64Image = base64Image.substring(commaIndex + 1);
+		}
 	    
-	    try {
-	    	// remove mime type, access encoded pixels only
-	    	String base64Image = runwayImageString.split(",")[1];
-	    	byte[] decodedBytes = DatatypeConverter.parseBase64Binary(base64Image);
-	    	
-	    	if(decodedBytes == null){
-	    		return null;
-	    	}
-	      
-	    	ByteArrayInputStream in = new ByteArrayInputStream(decodedBytes);
-	    	result = new PImage(ImageIO.read(in));
-	    	
-	    } catch (IOException e) {
-	    	e.printStackTrace();
-	    }
-	    
+		try {
+			byte[] decodedBytes = DatatypeConverter.parseBase64Binary(base64Image);
+			
+			if(decodedBytes == null){
+				return null;
+			}
+			
+			ByteArrayInputStream in = new ByteArrayInputStream(decodedBytes);
+			result = new PImage(ImageIO.read(in));
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+			
 	    return result;
 	}
-	
-	
-	
 	
 }

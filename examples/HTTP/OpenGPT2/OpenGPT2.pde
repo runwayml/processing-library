@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Runway ML Examples
+// Copyright (C) 2020 Runway ML Examples
 // 
 // This file is part of Runway ML Examples.
 // 
@@ -106,5 +106,5 @@ void runwayDataEvent(JSONObject runwayData){
   // point the sketch data to the Runway incoming data 
   data = runwayData;
   //get the value of the "text" key
-  text_output = data.getString("text");
+  text_output = data.getString("generated_text");
 }
