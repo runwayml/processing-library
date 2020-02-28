@@ -25,13 +25,13 @@ categories = Utilities,Data
 # repeating the name of your Library here. Also, avoid saying anything redundant 
 # like mentioning that it's a Library. This should start with a capitalized 
 # letter, and end with a period.
-sentence = Utility library to easily connect to RunwayML from Processing
+sentence = Easily send and receive data between RunwayML and your sketches.
 
 # Additional information suitable for the Processing website. The value of
 # 'sentence' always will be prepended, so you should start by writing the
 # second sentence here. If your Library only works on certain operating systems,
 # mention it here.
-paragraph = Utility library to easily connect to RunwayML from Processing  
+paragraph = Please ensure RunwayML is running a model first. When using RunwayML on a different computer on the same network double check the IP address and port are correct and that any firewall grant communication between coomputers.   
 
 # Links in the 'sentence' and 'paragraph' attributes can be inserted using the
 # same syntax as for authors. 
@@ -45,7 +45,7 @@ version = 1  # This must be parsable as an int
 
 # The version as the user will see it. If blank, the version attribute will be 
 # used here. This should be a single word, with no spaces.
-prettyVersion = 1.0.0  # This is treated as a String
+prettyVersion = 1.0.1  # This is treated as a String
 
 # The min and max revision of Processing compatible with your Library.
 # Note that these fields use the revision and not the version of Processing, 

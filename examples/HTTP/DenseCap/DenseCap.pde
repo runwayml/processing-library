@@ -53,7 +53,7 @@ void setup() {
   // disable automatic polling: request data manually when a new frame is ready
   runway.setAutoUpdate(false);
   // setup camera
-  camera = new Capture(this,640,480);
+  camera = new Capture(this, 640, 480);
   camera.start();
   // setup timer
   lastMillis = millis();
@@ -63,7 +63,7 @@ void draw() {
   // update timer
   int currentMillis = millis();
   // if the difference between current millis and last time we checked past the wait time
-  if(currentMillis - lastMillis >= waitTime){
+  if (currentMillis - lastMillis >= waitTime) {
     // call the timed function
     sendFrameToRunway();
     // update lastMillis, preparing for another wait
@@ -71,8 +71,8 @@ void draw() {
   }
   background(0);
   // draw webcam image
-  image(camera,0,0);
-  
+  image(camera, 0, 0);
+
   // Display captions
   drawCaptions();
 }
@@ -81,47 +81,52 @@ void draw() {
 // A function to display the captions
 void drawCaptions() {
   // if no data is loaded yet, exit
-  if(data == null){
+  if (data == null) {
     return;
   }
-  
-  // access boxes and labels JSON arrays within the result
-  JSONArray results = data.getJSONArray("results");
+
+
   // for each array element
-  for(int i = 0 ; i < results.size(); i++){
-    JSONObject result = results.getJSONObject(i);
-    
-    String className = result.getString("class");
-    float score = result.getFloat("score");
-    JSONArray box = result.getJSONArray("bbox");
-    // extract values from the float array
-    float x = box.getFloat(0);
-    float y = box.getFloat(1);
-    float w = box.getFloat(2);
-    float h = box.getFloat(3);
+  for (int i = 0; i < data.size(); i++) {
+
+
+    JSONArray className = data.getJSONArray("classes");
+    JSONArray score = data.getJSONArray("scores");
+    JSONArray boxes = data.getJSONArray("bboxes");
+
+    String label = className.getString(i);
+    float val=score.getFloat(i);
+    JSONArray box = boxes.getJSONArray(i);
+    //    //// extract values from the float array
+    float x = box.getFloat(0)* width;
+    float y = box.getFloat(1)* height;
+    float w = (box.getFloat(2) * width) - x;
+    float h = (box.getFloat(3) * height) - y;
+
     // display bounding boxes
     noFill();
-    rect(x,y,w,h);
+    rect(x, y, w, h);
     fill(255);
-    text(className + " score: " + String.format("%.2f",score),x,y);
+    text(label + " score: " + String.format("%.2f", val), x, y);
+
   }
 }
 
-void sendFrameToRunway(){
+void sendFrameToRunway() {
   // nothing to send if there's no new camera data available
-  if(camera.available() == false){
+  if (camera.available() == false) {
     return;
   }
   // read a new frame
   camera.read();
   // crop image to Runway input format (600x400)
-  PImage image = camera.get(0,0,600,400);
+  PImage image = camera.get(0, 0, 600, 400);
   // query Runway with webcam image 
   runway.query(image);
 }
 
 // this is called when new Runway data is available
-void runwayDataEvent(JSONObject runwayData){
+void runwayDataEvent(JSONObject runwayData) {
   // point the sketch data to the Runway incoming data 
   data = runwayData;
 }

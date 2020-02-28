@@ -1,4 +1,4 @@
-// Copyright (C) 2019 RunwayML Examples
+// Copyright (C) 2020 RunwayML Examples
 // 
 // This file is part of RunwayML Examples.
 // 
@@ -42,6 +42,8 @@ void setup() {
   stroke(255);
   // setup Runway
   runway = new RunwayHTTP(this);
+  // disable auto updates
+  runway.setAutoUpdate(false);
 }
 
 void draw() {
@@ -75,7 +77,7 @@ void keyPressed(){
   }
   if(key == ' '){
     if(inputImage != null){
-      runway.query(inputImage);
+      runway.query(inputImage,ModelUtils.IMAGE_FORMAT_JPG,"photo");
     }
   }
 }
