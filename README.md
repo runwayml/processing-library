@@ -237,11 +237,27 @@ To setup Processing on a Raspberry Pi please follow the official [Get Started tu
 
 1. please [install Android Mode for Processing](https://android.processing.org/install.html) (if it's not already installed on your system).
 2. allow `INTERNET` permissions in **Processing > Android > Sketch Permissions** ![Android library example preview](assets/examples//android-sketch-permissions.jpg)
-3. run the code
+3. run the code (e.g. attnGANAndroid)
+
+The one major caveat at the moment is the Base64 <-> PImage conversion is handled by a separate class: `ModelUtilsAndroid`.
+
+This means on Android
+
+```processing
+PImage result = ModelUtils.fromBase64(base64ImageString);
+```
+
+becomes:
+
+```processing
+PImage result = ModelUtilsAndroid.fromBase64(base64ImageString);
+```
+
+
 
 ![Android library example preview](assets/examples/attn-gan-android.png)
 
-(Additionally, it's even possible to write RunwayML Processing sketchs on the Android device using [APDE](https://github.com/Calsign/APDE/releases)
+(Additionally, it's even possible to write RunwayML Processing sketchs on the Android device using [APDE](https://github.com/Calsign/APDE/releases))
 
 
 ## Dependencies
