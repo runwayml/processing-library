@@ -1,4 +1,4 @@
-// Copyright (C) 2020 RunwayML Examples
+// Copyright (C) 2019 RunwayML Examples
 // 
 // This file is part of RunwayML Examples.
 // 
@@ -20,10 +20,10 @@
 // RUNWAYML
 // www.runwayml.com
 
-// DenseCap Demo:
+// COCO-SSD Demo:
 // Receive HTTP messages from Runway
-// Running DenseCap model
-// example by George Profenza, updated by Jen Sykes
+// Running COCO-SSD model
+// example by George Profenza
 
 // import video library
 import processing.video.*;
@@ -89,6 +89,7 @@ void drawCaptions() {
   // for each array element
   for (int i = 0; i < data.size(); i++) {
 
+
     JSONArray className = data.getJSONArray("classes");
     JSONArray score = data.getJSONArray("scores");
     JSONArray boxes = data.getJSONArray("bboxes");
@@ -96,7 +97,7 @@ void drawCaptions() {
     String label = className.getString(i);
     float val=score.getFloat(i);
     JSONArray box = boxes.getJSONArray(i);
-    // extract values from the float array
+    //    //// extract values from the float array
     float x = box.getFloat(0)* width;
     float y = box.getFloat(1)* height;
     float w = (box.getFloat(2) * width) - x;

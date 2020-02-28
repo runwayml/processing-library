@@ -107,5 +107,5 @@ void runwayDataEvent(JSONObject runwayData){
   // point the sketch data to the Runway incoming data 
   data = runwayData;
   //get the value of the "text" key
-  text_output = data.getString("text");
+  text_output = data.getString("generated_text");
 }
