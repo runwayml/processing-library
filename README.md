@@ -23,9 +23,9 @@ Before using the library please make sure RunwayML is started and is running one
 You can test by opening your browser and navigating to [http://localhost:8000/info](http://localhost:8000/info)
 to view info about your model.
 
-If you see a JSON string with inputs and outputs information use the Basic Example bellow !
+If you see a JSON string with inputs and outputs information use the Basic Example below !
 
-Feel free test the Basic Example bellow.
+Feel free to test the Basic Example below.
 
 ## Basic Example
 
@@ -146,8 +146,6 @@ style image: "Man with a guitar" by Georges Braques)
 
 - CycleGAN: ![preview](assets/examples/cycle-gan.jpg)
 (content image: "Fruit Dish" by Georges Braques)
-- DeepFill: ![preview](assets/examples/deep-fill.jpg)
-(content image: "Study after Velázquez's Portrait of Pope Innocent X" by Francis Bacon)
 - DeepLab: ![preview](assets/examples/deep-lab.jpg)
 (content image: "The Card Players" by Paul Cézanne)
 - DeepLabV3: ![preview](assets/examples/deep-lab-v3.jpg)
@@ -192,27 +190,23 @@ style image: "Fruit Dish" by Georges Braques)
 (image credits: Margaret Hamilton in 1969 with the source code her team developed for the Apollo missions. Photograph: Science History Images/Alamy Stock Photo via theguardian.com)
 - MobileNet: ![preview](assets/examples/mobilenet.jpg)
 (content image: "Still Life with fruit dish" by Paul Cézanne)
-- Model3DDFA: ![preview](assets/examples/3ddfa.jpg)
-(image credits: "Portrait of Ada Lovelace" by Margaret Sarah Carpenter)
 - OpenGPT-2: ![preview](assets/examples/open-gpt-2.jpg)
 - OpenPifPaf-Pose: ![preview](assets/examples/open-pif-paf.jpg)
 (image credits: Margaret Hamilton in 1969 with the source code her team developed for the Apollo missions. Photograph: Science History Images/Alamy Stock Photo via theguardian.com)
 - Photo-Sketch: ![preview](assets/examples/photo-sketch.jpg)
 - Pix2Pix: ![preview](assets/examples/pix2pix.jpg)
 (content image: "Broadway Boogie Woogie" by Piet Mondrian)
-- Pix2Pix Facemarks2Portrait: ![preview](assets/examples/pix2pix-facemarks2portrait.jpg)
 - Places365: ![preview](assets/examples/places-365.jpg)
 (image credits: "London: The Thames from Somerset House Terrace towards the City" by Canaletto)
 - PoseNet: ![preview](assets/examples/posenet.jpg)
 (image credits: Margaret Hamilton in 1969 with the source code her team developed for the Apollo missions. Photograph: Science History Images/Alamy Stock Photo via theguardian.com)
 - SPADE-COCO: ![preview](assets/examples/spade-coco.jpg)
-(uses segmenation based on "The Card Players" by Paul Cézanne)
+(uses segmentation based on "The Card Players" by Paul Cézanne)
 - SPADE-Landscapes: ![preview](assets/examples/spade-landscapes.jpg)
-(uses segmenation based on "The Card Players" by Paul Cézanne)
+(uses segmentation based on "The Card Players" by Paul Cézanne)
 - Style2Paints: ![preview](assets/examples/style2paints.jpg)
 (content image: "Self-Portrait with Striped Shirt" by Egon Schiele)
 - StyleGAN: ![preview](assets/examples/style-gan.jpg)
-- VisualImportance: ![preview](assets/examples/visual-importance.jpg)
 (image credits: "Portrait of Ada Lovelace" by Margaret Sarah Carpenter)
 - YOLACT: ![preview](assets/examples/yolact.jpg)
 (content image: "The Card Players" by Paul Cézanne)  
@@ -225,8 +219,8 @@ Additionally you can use RunwayML on a machine on the local network and connect 
 
 ### Raspberry PI
 
-As long as you have a Raspberry PI running Processing, all you need to do is specify the IP (and optioanlly port) of the computer running the RunwayML app: that's it!
-(e.g. if you computer's LAN IP is 192.168.0.12 you would initialze Runway like so: `runway = new RunwayHTTP(this,"192.168.0.12",8000);`)
+As long as you have a Raspberry PI running Processing, all you need to do is specify the IP (and optionally port) of the computer running the RunwayML app: that's it!
+(e.g. if your computer's LAN IP is 192.168.0.12 you would initialize Runway like so: `runway = new RunwayHTTP(this,"192.168.0.12",8000);`)
 
 To setup Processing on a Raspberry Pi please follow the official [Get Started tutorial](https://pi.processing.org/get-started/)
 
@@ -274,9 +268,9 @@ This is still a work in progress. Contributions are welcomed!
 
 Special thanks for mentoring and support from [Cris Valenzuela, Anastasis Germanidis](https://runwayml.com) and [Daniel Shiffman](https://github.com/shiffman)
 
-Additional thanks to [Jen Sykes](http://www.gsa.ac.uk/about-gsa/our-people/our-staff/s/sykes,-jen/) for updating the DensCap and GPT2 examples
+Additional thanks to [Jen Sykes](http://www.gsa.ac.uk/about-gsa/our-people/our-staff/s/sykes,-jen/) for updating the DenseCap and GPT2 examples
 
-Main library developement by [George Profenza](https://github.com/orgicus)
+Main library development by [George Profenza](https://github.com/orgicus)
 
 Library examples are based partially on [Runway Processing Examples](https://github.com/runwayml/processing) by:
 
