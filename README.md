@@ -219,6 +219,30 @@ style image: "Fruit Dish" by Georges Braques)
 - UGATIT: ![preview](assets/examples/ugatit.jpg)
 (content image: "Still Life with fruit dish" by Paul Cézanne)
 
+## Extra platforms
+
+Additionally you can use RunwayML on a machine on the local network and connect from another device capable of running Processing.
+
+### Raspberry PI
+
+As long as you have a Raspberry PI running Processing, all you need to do is specify the IP (and optioanlly port) of the computer running the RunwayML app: that's it!
+(e.g. if you computer's LAN IP is 192.168.0.12 you would initialze Runway like so: `runway = new RunwayHTTP(this,"192.168.0.12",8000);`)
+
+To setup Processing on a Raspberry Pi please follow the official [Get Started tutorial](https://pi.processing.org/get-started/)
+
+![Raspberry Pi library example preview](assets/examples/attn-gan-raspberry-pi.jpg)
+
+
+### Android
+
+1. please [install Android Mode for Processing](https://android.processing.org/install.html) (if it's not already installed on your system).
+2. allow `INTERNET` permissions in **Processing > Android > Sketch Permissions** ![Android library example preview](assets/examples//android-sketch-permissions.jpg)
+3. run the code
+
+![Android library example preview](assets/examples/attn-gan-android.png)
+
+(Additionally, it's even possible to write RunwayML Processing sketchs on the Android device using [APDE](https://github.com/Calsign/APDE/releases)
+
 
 ## Dependencies
 
@@ -233,6 +257,8 @@ This is still a work in progress. Contributions are welcomed!
 ## Credits
 
 Special thanks for mentoring and support from [Cris Valenzuela, Anastasis Germanidis](https://runwayml.com) and [Daniel Shiffman](https://github.com/shiffman)
+
+Additional thanks to [Jen Sykes](http://www.gsa.ac.uk/about-gsa/our-people/our-staff/s/sykes,-jen/) for updating the DensCap and GPT2 examples
 
 Main library developement by [George Profenza](https://github.com/orgicus)
 
